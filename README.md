@@ -1,69 +1,94 @@
-# React + TypeScript + Vite
+# 🧠 ETTU UI – Espace de Travail Technique Unifié
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend officiel de **ETTU** (Espace de Travail Technique Unifié), un outil personnel d’organisation pour développeurs.
 
-Currently, two official plugins are available:
+> Centralisez vos notes Markdown, snippets, tâches et projets techniques. Rapide, local, versionné.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ⚙️ Stack technique
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- ⚛️ [React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- ⚡ [Vite](https://vitejs.dev/)
+- 🎨 [TailwindCSS](https://tailwindcss.com/)
+- 🔍 [Fuse.js](https://fusejs.io/) (recherche plein texte)
+- 🧠 [Zustand](https://github.com/pmndrs/zustand) (à venir – gestion d’état)
+- 📝 [CodeMirror](https://codemirror.net/) (à venir – éditeur markdown/snippets)
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🚀 Lancer le projet en local
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/ETTU-org/ettu-ui.git
+cd ettu-ui
+
+# 2. Installer les dépendances
+npm install
+
+# 3. Démarrer le serveur de dev
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📁 Arborescence du projet
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+ettu-ui/
+├── public/             # Assets publics
+├── src/
+│   ├── assets/         # Logos, icônes, images
+│   ├── components/     # Composants UI
+│   ├── pages/          # Pages principales (Notes, Snippets, Projets…)
+│   ├── store/          # Zustand store (état global, à venir)
+│   ├── styles/         # Fichiers CSS/Tailwind
+│   ├── utils/          # Fonctions utilitaires
+│   ├── App.tsx         # App principale
+│   └── main.tsx        # Entrée Vite
+├── index.html
+├── tailwind.config.js
+└── vite.config.ts
 ```
+
+## 📌 Roadmap (MVP Été 2025)
+
+    ✅ Setup React + Vite + TypeScript
+
+    ✅ Intégration TailwindCSS
+
+    ⏳ Ajout éditeur Markdown (CodeMirror)
+
+    ⏳ Composants de notes/snippets
+
+    ⏳ Interface projets et tâches
+
+    ⏳ Intégration API backend (Axum - Rust)
+
+    ⏳ Système de versionning local (Git, diff)
+
+## 👨‍💻 Contribuer
+
+Pré-requis
+
+    Node.js 18+
+
+    npm ou pnpm
+
+    Git
+
+Convention Git
+
+    main = production-ready
+
+    dev/feature-xyz = branche par fonctionnalité
+
+    PR = squash + merge après review
+
+## 🪪 Licence
+
+MIT — libre d'utilisation, modification et distribution.
+
+## ✉️ Contact
+
+    Organisation : ETTU-org
+    Contact dev : github.com/ETTU-org
