@@ -25,6 +25,7 @@ import { useState } from "react";
 import Layout from "../layouts/Layout";
 import SnippetList from "../features/snippets/SnippetList";
 import SnippetEditor from "../features/snippets/SnippetEditor";
+import SnippetPreview from "../features/snippets/SnippetPreview";
 import { ResponsiveLayout } from "../utils/responsive";
 import type { Snippet, SnippetFormData } from "../types/snippet";
 
@@ -505,10 +506,8 @@ function SnippetPreviewView({
             onCancel={onCancel}
           />
         ) : selectedSnippet ? (
-          <SnippetList
-            snippets={[selectedSnippet]}
-            selectedSnippet={selectedSnippet}
-            onSelect={() => {}}
+          <SnippetPreview
+            snippet={selectedSnippet}
             onEdit={onEdit}
             onDelete={onDelete}
           />
