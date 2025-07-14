@@ -27,13 +27,17 @@ import { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { marked } from "marked";
+import DOMPurify from "dompurify";
 import { ResponsiveLayout } from "../../utils/responsive";
 import { secureLocalStorage } from "../../utils/secureLocalStorage";
+import { validateNoteContent, validateFilename, logSecurityEvent } from "../../utils/securityValidator";
 
 export default function NoteEditor() {
   const [content, setContent] = useState("");
   const [fileName, setFileName] = useState("nouvelle-note.md");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [contentValidationErrors, setContentValidationErrors] = useState<string[]>([]);
 
   // Charger le contenu depuis le secureStorage au démarrage
   useEffect(() => {
@@ -112,12 +116,35 @@ Commencez à écrire votre note technique !`);
     }
   }, []);
 
-  // Auto-sauvegarde toutes les 2 secondes
+  // Auto-sauvegarde toutes les 2 secondes avec validation
   useEffect(() => {
     const interval = setInterval(() => {
       if (content.trim()) {
-        secureLocalStorage.setItem("noteEditor-content", content);
-        secureLocalStorage.setItem("noteEditor-fileName", fileName);
+        // Valider le contenu avant sauvegarde
+        const contentValidation = validateNoteContent(content);
+        const filenameValidation = validateFilename(fileName);
+        
+        if (!contentValidation.isValid) {
+          logSecurityEvent('invalid_content_attempted', {
+            errors: contentValidation.errors,
+            contentLength: content.length
+          });
+          console.warn('Contenu invalide détecté:', contentValidation.errors);
+          return;
+        }
+        
+        if (!filenameValidation.isValid) {
+          logSecurityEvent('invalid_filename_attempted', {
+            errors: filenameValidation.errors,
+            filename: fileName
+          });
+          console.warn('Nom de fichier invalide détecté:', filenameValidation.errors);
+          return;
+        }
+        
+        // Sauvegarder le contenu sanitisé
+        secureLocalStorage.setItem("noteEditor-content", contentValidation.sanitized);
+        secureLocalStorage.setItem("noteEditor-fileName", filenameValidation.sanitized);
         setLastSaved(new Date());
       }
     }, 2000);
@@ -126,7 +153,18 @@ Commencez à écrire votre note technique !`);
   }, [content, fileName]);
 
   const insertTemplate = (template: string) => {
-    setContent((prev) => prev + "\n\n" + template);
+    // Valider le template avant insertion
+    const validation = validateNoteContent(template);
+    if (!validation.isValid) {
+      logSecurityEvent('invalid_template_attempted', {
+        errors: validation.errors,
+        template: template
+      });
+      console.warn('Template invalide détecté:', validation.errors);
+      return;
+    }
+    
+    setContent((prev) => prev + "\n\n" + validation.sanitized);
   };
 
   const clearContent = () => {
@@ -139,13 +177,43 @@ Commencez à écrire votre note technique !`);
   };
 
   const downloadNote = () => {
-    const blob = new Blob([content], { type: "text/markdown" });
+    // Valider le contenu et le nom de fichier avant téléchargement
+    const contentValidation = validateNoteContent(content);
+    const filenameValidation = validateFilename(fileName);
+    
+    if (!contentValidation.isValid) {
+      logSecurityEvent('invalid_download_content_attempted', {
+        errors: contentValidation.errors,
+        contentLength: content.length
+      });
+      alert('Erreur: Le contenu de la note contient des éléments invalides.\n' + 
+            contentValidation.errors.join('\n'));
+      return;
+    }
+    
+    if (!filenameValidation.isValid) {
+      logSecurityEvent('invalid_download_filename_attempted', {
+        errors: filenameValidation.errors,
+        filename: fileName
+      });
+      alert('Erreur: Le nom de fichier est invalide.\n' + 
+            filenameValidation.errors.join('\n'));
+      return;
+    }
+    
+    // Utiliser le contenu et nom de fichier sanitisés
+    const blob = new Blob([contentValidation.sanitized], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = fileName;
+    a.download = filenameValidation.sanitized;
     a.click();
     URL.revokeObjectURL(url);
+    
+    logSecurityEvent('note_downloaded', {
+      filename: filenameValidation.sanitized,
+      contentLength: contentValidation.sanitized.length
+    });
   };
 
   const newNote = () => {
@@ -160,6 +228,11 @@ Commencez à écrire votre note technique !`);
       secureLocalStorage.removeItem("noteEditor-content");
       secureLocalStorage.removeItem("noteEditor-fileName");
       setLastSaved(null);
+      
+      logSecurityEvent('new_note_created', {
+        previousContentLength: content.length,
+        previousFilename: fileName
+      });
     }
   };
 
@@ -184,13 +257,40 @@ Commencez à écrire votre note technique !`);
             </div>
           </div>
           <div className="flex flex-col md:flex-row md:items-center gap-2">
-            <input
-              type="text"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
-              className="w-full md:w-auto px-3 py-1 border border-gray-600 bg-gray-800 text-white rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="nom-du-fichier.md"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={fileName}
+                onChange={(e) => {
+                  const newFileName = e.target.value;
+                  setFileName(newFileName);
+                  
+                  // Validation en temps réel
+                  const validation = validateFilename(newFileName);
+                  setValidationErrors(validation.errors);
+                  
+                  if (!validation.isValid) {
+                    logSecurityEvent('invalid_filename_input', {
+                      errors: validation.errors,
+                      filename: newFileName
+                    });
+                  }
+                }}
+                className={`w-full md:w-auto px-3 py-1 border rounded text-sm focus:outline-none focus:ring-2 ${
+                  validationErrors.length > 0 
+                    ? 'border-red-500 bg-red-900 text-red-100 focus:ring-red-500' 
+                    : 'border-gray-600 bg-gray-800 text-white focus:ring-blue-500'
+                }`}
+                placeholder="nom-du-fichier.md"
+              />
+              {validationErrors.length > 0 && (
+                <div className="absolute top-full left-0 mt-1 p-2 bg-red-900 border border-red-700 rounded text-xs text-red-100 z-10 w-full md:w-64">
+                  {validationErrors.map((error, index) => (
+                    <div key={index}>• {error}</div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={newNote}
@@ -294,7 +394,14 @@ Commencez à écrire votre note technique !`);
       {/* Éditeur et prévisualisation */}
       <div className="flex-1 min-h-0">
         <ResponsiveLayout
-          mainContent={<EditorView content={content} setContent={setContent} />}
+          mainContent={
+            <EditorView 
+              content={content} 
+              setContent={setContent} 
+              contentValidationErrors={contentValidationErrors}
+              setContentValidationErrors={setContentValidationErrors}
+            />
+          }
           previewContent={<PreviewView content={content} />}
           tabs={[
             { id: 'main', label: 'Éditeur', icon: '✏️' },
@@ -309,13 +416,46 @@ Commencez à écrire votre note technique !`);
 /**
  * Composant d'éditeur Markdown
  */
-function EditorView({ content, setContent }: { content: string; setContent: (value: string) => void }) {
+function EditorView({ 
+  content, 
+  setContent, 
+  contentValidationErrors, 
+  setContentValidationErrors 
+}: { 
+  content: string; 
+  setContent: (value: string) => void;
+  contentValidationErrors: string[];
+  setContentValidationErrors: (errors: string[]) => void;
+}) {
+  const handleContentChange = (value: string) => {
+    setContent(value);
+    
+    // Validation en temps réel du contenu
+    const validation = validateNoteContent(value);
+    setContentValidationErrors(validation.errors);
+    
+    if (!validation.isValid) {
+      logSecurityEvent('invalid_content_input', {
+        errors: validation.errors,
+        contentLength: value.length
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-white">
-          Éditeur Markdown
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-white">
+            Éditeur Markdown
+          </h2>
+          {contentValidationErrors.length > 0 && (
+            <div className="flex items-center gap-1 text-red-400">
+              <span className="text-sm">⚠️</span>
+              <span className="text-xs">Erreurs détectées</span>
+            </div>
+          )}
+        </div>
         <div className="flex items-center space-x-4 text-sm text-gray-400">
           <span>{content.length} caractères</span>
           <span>{content.split("\n").length} lignes</span>
@@ -325,13 +465,24 @@ function EditorView({ content, setContent }: { content: string; setContent: (val
           </span>
         </div>
       </div>
+      
+      {/* Affichage des erreurs de validation */}
+      {contentValidationErrors.length > 0 && (
+        <div className="mb-3 p-3 bg-red-900 border border-red-700 rounded text-sm text-red-100">
+          <div className="font-semibold mb-1">⚠️ Erreurs de validation :</div>
+          {contentValidationErrors.map((error, index) => (
+            <div key={index} className="ml-2">• {error}</div>
+          ))}
+        </div>
+      )}
+      
       <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
         <CodeMirror
           value={content}
           height="100%"
           extensions={[markdown()]}
           theme="dark"
-          onChange={(value) => setContent(value)}
+          onChange={handleContentChange}
           className="text-sm"
         />
       </div>
@@ -383,13 +534,30 @@ function MarkdownPreview({ content }: { content: string }) {
     breaks: true, // Conversion des retours à la ligne
   });
 
-  const htmlContent = marked(content);
+  const htmlContent = marked(content) as string;
+
+  // Sanitiser le HTML avec DOMPurify pour éviter les XSS
+  const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'blockquote',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'ul', 'ol', 'li',
+      'table', 'thead', 'tbody', 'tr', 'th', 'td',
+      'a', 'img',
+      'div', 'span'
+    ],
+    ALLOWED_ATTR: [
+      'href', 'title', 'alt', 'src', 'width', 'height',
+      'class', 'id'
+    ],
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|ftp):)?\/\/[^\s/$.?#].[^\s]*$/i
+  });
 
   return (
     <div className="p-4 overflow-y-auto h-full bg-gray-900 text-gray-100">
       <div
         className="markdown-preview"
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
       />
     </div>
   );

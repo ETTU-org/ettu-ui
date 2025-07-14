@@ -1,8 +1,11 @@
 import Layout from "../layouts/Layout";
+import DevWelcomeBanner from "../components/DevWelcomeBanner";
 
 export default function HomePage() {
   return (
     <Layout>
+      <DevWelcomeBanner />
+      
       <section className="text-center space-y-6">
         <h1 className="text-4xl md:text-6xl font-extrabold text-white">ETTU</h1>
         <p className="text-lg md:text-xl text-gray-300 max-w-xl mx-auto">

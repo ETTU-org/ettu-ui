@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { DevNavLink } from "./DevOnlyRoute";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +35,14 @@ export default function Header() {
               Projets
             </Link>
           </li>
+          
+          {/* Liens de développement - uniquement sur port 5199 */}
+          <DevNavLink to="/admin" className="text-yellow-400 hover:underline">
+            🛠️ Admin
+          </DevNavLink>
+          <DevNavLink to="/test" className="text-blue-400 hover:underline">
+            🧪 Test
+          </DevNavLink>
         </ul>
 
         {/* Mobile hamburger */}
@@ -83,11 +92,14 @@ export default function Header() {
             <li>
               <Link to="/projects">Projets</Link>
             </li>
-            <li>
-              <Link to="/test" className="text-yellow-400">
-                🧪 Test
-              </Link>
-            </li>
+            
+            {/* Liens de développement - uniquement sur port 5199 */}
+            <DevNavLink to="/admin" className="text-yellow-400">
+              🛠️ Panel Admin
+            </DevNavLink>
+            <DevNavLink to="/test" className="text-blue-400">
+              🧪 Tests
+            </DevNavLink>
           </ul>
         </div>
       )}

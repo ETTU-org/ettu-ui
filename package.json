@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:secure": "./dev-start.sh",
+    "dev:admin": "vite --port 5199 --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:security": "vitest run src/tests/security.test.ts",
+    "test:watch": "vitest --watch",
+    "security:check": "./security-check.sh"
   },
   "dependencies": {
     "@codemirror/lang-css": "^6.3.1",
@@ -18,10 +24,12 @@
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
     "@types/crypto-js": "^4.2.2",
+    "@types/dompurify": "^3.0.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/validator": "^13.15.2",
     "@uiw/react-codemirror": "^4.24.0",
     "crypto-js": "^4.2.0",
+    "dompurify": "^3.2.6",
     "lucide-react": "^0.525.0",
     "marked": "^16.0.0",
     "postcss": "^8.5.6",
@@ -33,6 +41,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^24.0.13",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
@@ -40,8 +50,10 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "jsdom": "^26.1.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
   }
 }
