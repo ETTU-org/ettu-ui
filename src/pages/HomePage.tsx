@@ -24,35 +24,42 @@ export default function HomePage() {
           {
             title: "Notes Markdown",
             desc: "Éditeur complet, preview, tags et versionning.",
+            link: "/notes",
           },
           {
             title: "Snippets intelligents",
             desc: "Stockez vos extraits de code par langage, projet ou tag.",
+            link: "/snippets",
           },
           {
             title: "TODO Techniques",
             desc: "Gardez une trace claire de vos tâches liées à vos projets.",
+            link: "/todos",
           },
           {
             title: "Versionning Git",
             desc: "Suivi de toutes vos modifications localement, automatiquement.",
+            link: "/git",
           },
           {
             title: "Recherche instantanée",
             desc: "Retrouvez vos données techniques avec Fuse.js.",
+            link: "/search",
           },
           {
             title: "100% local & open source",
             desc: "Pas d’inscription, pas de cloud, juste votre environnement.",
+            link: "/about",
           },
-        ].map(({ title, desc }) => (
-          <div
+        ].map(({ title, desc, link }) => (
+          <a
             key={title}
-            className="p-6 bg-gray-800 rounded shadow hover:shadow-xl hover:-translate-y-1 transition duration-300 transform"
+            href={link}
+            className="block p-6 bg-gray-800 rounded shadow hover:shadow-xl hover:-translate-y-1 transition duration-300 transform focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <h3 className="text-lg font-semibold text-white">{title}</h3>
             <p className="mt-2 text-gray-400">{desc}</p>
-          </div>
+          </a>
         ))}
       </section>
     </Layout>
