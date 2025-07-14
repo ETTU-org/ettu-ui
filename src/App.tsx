@@ -7,6 +7,8 @@ import CGUPage from "./pages/CGUPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import LegalNoticePage from "./pages/LegalNoticePage";
 import LegalPage from "./pages/LegalPage";
+import AdminStoragePage from "./pages/AdminStoragePage";
+import TestPage from "./pages/TestPage";
 import "./App.css";
 
 export default function App() {
@@ -20,6 +22,8 @@ export default function App() {
         <Route path="/cgu" element={<CGUPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/legal-notice" element={<LegalNoticePage />} />
+        <Route path="/admin/storage" element={<AdminStoragePage />} />
+        <Route path="/test" element={<TestPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

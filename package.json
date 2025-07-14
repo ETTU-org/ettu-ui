@@ -17,15 +17,19 @@
     "@codemirror/lang-python": "^6.2.1",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/crypto-js": "^4.2.2",
     "@types/react-router-dom": "^5.3.3",
+    "@types/validator": "^13.15.2",
     "@uiw/react-codemirror": "^4.24.0",
+    "crypto-js": "^4.2.0",
     "lucide-react": "^0.525.0",
     "marked": "^16.0.0",
     "postcss": "^8.5.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "validator": "^13.15.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

@@ -21,29 +21,22 @@
  * ```
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../layouts/Layout";
 import SnippetList from "../features/snippets/SnippetList";
 import SnippetEditor from "../features/snippets/SnippetEditor";
 import SnippetPreview from "../features/snippets/SnippetPreview";
 import { ResponsiveLayout } from "../utils/responsive";
 import type { Snippet, SnippetFormData } from "../types/snippet";
+import { useSecureStorage, useStorageCleanup } from "../hooks/useSecureStorage";
 
-/**
- * Composant principal de la page Snippets
- *
- * Gère l'état global des snippets et orchestre les interactions
- * entre la liste, l'éditeur et les fonctionnalités de filtrage
- *
- * @returns Le composant de page des snippets
- */
-export default function SnippetsPage() {
-  const [snippets, setSnippets] = useState<Snippet[]>([
-    {
-      id: "1",
-      title: "Fonction de debounce",
-      language: "JavaScript",
-      code: `function debounce(func, wait) {
+// Données initiales pour les snippets
+const initialSnippets: Snippet[] = [
+  {
+    id: "1",
+    title: "Fonction de debounce",
+    language: "JavaScript",
+    code: `function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
     const later = () => {
@@ -54,33 +47,33 @@ export default function SnippetsPage() {
     timeout = setTimeout(later, wait);
   };
 }`,
-      description:
-        "Fonction utilitaire pour limiter la fréquence d'exécution d'une fonction",
-      tags: ["utils", "performance"],
-      project: "Projet Web",
-      createdAt: new Date("2025-01-10"),
-      updatedAt: new Date("2025-01-10"),
-    },
-    {
-      id: "2",
-      title: "Validation email regex",
-      language: "JavaScript",
-      code: `const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+    description:
+      "Fonction utilitaire pour limiter la fréquence d'exécution d'une fonction",
+    tags: ["utils", "performance"],
+    project: "Projet Web",
+    createdAt: new Date("2025-01-10"),
+    updatedAt: new Date("2025-01-10"),
+  },
+  {
+    id: "2",
+    title: "Validation email regex",
+    language: "JavaScript",
+    code: `const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
 
 function validateEmail(email) {
   return emailRegex.test(email);
 }`,
-      description: "Validation d'email avec regex simple",
-      tags: ["validation", "regex"],
-      project: "Formulaires",
-      createdAt: new Date("2025-01-12"),
-      updatedAt: new Date("2025-01-12"),
-    },
-    {
-      id: "3",
-      title: "Composant Button React",
-      language: "TSX",
-      code: `interface ButtonProps {
+    description: "Validation d'email avec regex simple",
+    tags: ["validation", "regex"],
+    project: "Formulaires",
+    createdAt: new Date("2025-01-12"),
+    updatedAt: new Date("2025-01-12"),
+  },
+  {
+    id: "3",
+    title: "Composant Button React",
+    language: "TSX",
+    code: `interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
@@ -117,17 +110,17 @@ export default function Button({
     </button>
   );
 }`,
-      description: "Composant Button réutilisable avec variants et tailles",
-      tags: ["react", "component", "ui"],
-      project: "Design System",
-      createdAt: new Date("2025-01-14"),
-      updatedAt: new Date("2025-01-14"),
-    },
-    {
-      id: "4",
-      title: "Script de déploiement Docker",
-      language: "Bash",
-      code: `#!/bin/bash
+    description: "Composant Button réutilisable avec variants et tailles",
+    tags: ["react", "component", "ui"],
+    project: "Design System",
+    createdAt: new Date("2025-01-14"),
+    updatedAt: new Date("2025-01-14"),
+  },
+  {
+    id: "4",
+    title: "Script de déploiement Docker",
+    language: "Bash",
+    code: `#!/bin/bash
 
 # Variables
 IMAGE_NAME="myapp"
@@ -148,17 +141,17 @@ echo "Starting new container..."
 docker run -d --name $CONTAINER_NAME -p 3000:3000 $IMAGE_NAME:$TAG
 
 echo "Deployment completed!"`,
-      description: "Script automatisé pour déployer une application Docker",
-      tags: ["docker", "deployment", "automation"],
-      project: "DevOps",
-      createdAt: new Date("2025-01-13"),
-      updatedAt: new Date("2025-01-13"),
-    },
-    {
-      id: "5",
-      title: "Analyse de données avec Pandas",
-      language: "Python",
-      code: `import pandas as pd
+    description: "Script automatisé pour déployer une application Docker",
+    tags: ["docker", "deployment", "automation"],
+    project: "DevOps",
+    createdAt: new Date("2025-01-13"),
+    updatedAt: new Date("2025-01-13"),
+  },
+  {
+    id: "5",
+    title: "Analyse de données avec Pandas",
+    language: "Python",
+    code: `import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -190,17 +183,17 @@ def analyze_sales_data(filepath):
         'average': avg_sale,
         'monthly': monthly_sales
     }`,
-      description: "Fonction d'analyse de données de ventes avec visualisation",
-      tags: ["data-analysis", "pandas", "visualization"],
-      project: "Data Science",
-      createdAt: new Date("2025-01-15"),
-      updatedAt: new Date("2025-01-15"),
-    },
-    {
-      id: "6",
-      title: "Configuration Nginx",
-      language: "NGINX",
-      code: `server {
+    description: "Fonction d'analyse de données de ventes avec visualisation",
+    tags: ["data-analysis", "pandas", "visualization"],
+    project: "Data Science",
+    createdAt: new Date("2025-01-15"),
+    updatedAt: new Date("2025-01-15"),
+  },
+  {
+    id: "6",
+    title: "Configuration Nginx",
+    language: "NGINX",
+    code: `server {
     listen 80;
     server_name example.com www.example.com;
     
@@ -247,13 +240,43 @@ server {
         add_header Cache-Control "public, immutable";
     }
 }`,
-      description: "Configuration Nginx complète avec SSL, proxy et cache",
-      tags: ["nginx", "ssl", "proxy", "cache"],
-      project: "Infrastructure",
-      createdAt: new Date("2025-01-16"),
-      updatedAt: new Date("2025-01-16"),
-    },
-  ]);
+    description: "Configuration Nginx complète avec SSL, proxy et cache",
+    tags: ["nginx", "ssl", "proxy", "cache"],
+    project: "Infrastructure",
+    createdAt: new Date("2025-01-16"),
+    updatedAt: new Date("2025-01-16"),
+  },
+];
+
+/**
+ * Composant principal de la page Snippets
+ *
+ * Gère l'état global des snippets et orchestre les interactions
+ * entre la liste, l'éditeur et les fonctionnalités de filtrage
+ *
+ * @returns Le composant de page des snippets
+ */
+export default function SnippetsPage() {
+  // Utilisation du stockage sécurisé pour les snippets
+  const [storedSnippets, setStoredSnippets] = useSecureStorage<Snippet[]>("snippets", initialSnippets);
+  const [snippets, setSnippets] = useState<Snippet[]>(storedSnippets || initialSnippets);
+  
+  // Nettoyage automatique des données expirées
+  useStorageCleanup(60); // Nettoyage toutes les heures
+
+  // Synchroniser avec le stockage sécurisé
+  useEffect(() => {
+    if (storedSnippets) {
+      setSnippets(storedSnippets);
+    }
+  }, [storedSnippets]);
+
+  // Sauvegarder dans le stockage sécurisé à chaque modification
+  useEffect(() => {
+    if (snippets.length > 0) {
+      setStoredSnippets(snippets);
+    }
+  }, [snippets, setStoredSnippets]);
 
   const [selectedSnippet, setSelectedSnippet] = useState<Snippet | null>(null);
   const [isEditing, setIsEditing] = useState(false);

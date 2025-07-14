@@ -8,18 +8,19 @@
  *
  * Ce composant permet de créer et éditer des notes techniques en Markdown.
  * Il inclut un éditeur avec syntaxe Markdown, une prévisualisation en temps réel
- * et des fonctionnalités d'auto-sauvegarde dans le localStorage.
+ * et des fonctionnalités d'auto-sauvegarde dans le stockage sécurisé (secureStorage).
  * L'utilisateur peut insérer des modèles de texte, effacer le contenu,
  * télécharger la note au format Markdown et créer de nouvelles notes.
  * * Les fonctionnalités incluent :
  * - Éditeur Markdown avec syntaxe colorée
  * - Prévisualisation en temps réel du rendu Markdown
- * - Auto-sauvegarde dans le localStorage toutes les 2 secondes
+ * - Auto-sauvegarde dans le stockage sécurisé toutes les 2 secondes
  * - Insertion de modèles de texte (gras, italique, code, listes, liens
  *  tableaux, citations)
  * - Effacement du contenu avec confirmation
  * - Téléchargement de la note au format Markdown
  * - Création de nouvelles notes avec confirmation
+ * - Stockage sécurisé avec chiffrement AES-256 des données
  */
 
 import { useState, useEffect } from "react";
@@ -27,16 +28,37 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { marked } from "marked";
 import { ResponsiveLayout } from "../../utils/responsive";
+import { secureLocalStorage } from "../../utils/secureLocalStorage";
 
 export default function NoteEditor() {
   const [content, setContent] = useState("");
   const [fileName, setFileName] = useState("nouvelle-note.md");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-  // Charger le contenu depuis le localStorage au démarrage
+  // Charger le contenu depuis le secureStorage au démarrage
   useEffect(() => {
-    const savedContent = localStorage.getItem("noteEditor-content");
-    const savedFileName = localStorage.getItem("noteEditor-fileName");
+    // Migration des données existantes du localStorage vers secureStorage
+    const migrateFromLocalStorage = () => {
+      const oldContent = localStorage.getItem("noteEditor-content");
+      const oldFileName = localStorage.getItem("noteEditor-fileName");
+      
+      if (oldContent && !secureLocalStorage.hasItem("noteEditor-content")) {
+        console.log("Migration des données vers le stockage sécurisé...");
+        secureLocalStorage.setItem("noteEditor-content", oldContent);
+        if (oldFileName) {
+          secureLocalStorage.setItem("noteEditor-fileName", oldFileName);
+        }
+        // Nettoyer les anciennes données
+        localStorage.removeItem("noteEditor-content");
+        localStorage.removeItem("noteEditor-fileName");
+        console.log("Migration terminée avec succès");
+      }
+    };
+
+    migrateFromLocalStorage();
+
+    const savedContent = secureLocalStorage.getItem("noteEditor-content");
+    const savedFileName = secureLocalStorage.getItem("noteEditor-fileName");
 
     if (savedContent) {
       setContent(savedContent);
@@ -94,8 +116,8 @@ Commencez à écrire votre note technique !`);
   useEffect(() => {
     const interval = setInterval(() => {
       if (content.trim()) {
-        localStorage.setItem("noteEditor-content", content);
-        localStorage.setItem("noteEditor-fileName", fileName);
+        secureLocalStorage.setItem("noteEditor-content", content);
+        secureLocalStorage.setItem("noteEditor-fileName", fileName);
         setLastSaved(new Date());
       }
     }, 2000);
@@ -110,8 +132,8 @@ Commencez à écrire votre note technique !`);
   const clearContent = () => {
     if (confirm("Êtes-vous sûr de vouloir effacer tout le contenu ?")) {
       setContent("");
-      localStorage.removeItem("noteEditor-content");
-      localStorage.removeItem("noteEditor-fileName");
+      secureLocalStorage.removeItem("noteEditor-content");
+      secureLocalStorage.removeItem("noteEditor-fileName");
       setLastSaved(null);
     }
   };
@@ -135,8 +157,8 @@ Commencez à écrire votre note technique !`);
     ) {
       setContent("");
       setFileName("nouvelle-note.md");
-      localStorage.removeItem("noteEditor-content");
-      localStorage.removeItem("noteEditor-fileName");
+      secureLocalStorage.removeItem("noteEditor-content");
+      secureLocalStorage.removeItem("noteEditor-fileName");
       setLastSaved(null);
     }
   };

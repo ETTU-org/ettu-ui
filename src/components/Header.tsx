@@ -83,6 +83,11 @@ export default function Header() {
             <li>
               <Link to="/projects">Projets</Link>
             </li>
+            <li>
+              <Link to="/test" className="text-yellow-400">
+                🧪 Test
+              </Link>
+            </li>
           </ul>
         </div>
       )}
