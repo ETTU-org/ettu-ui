@@ -25,7 +25,8 @@ import { useState } from "react";
 import Layout from "../layouts/Layout";
 import SnippetList from "../features/snippets/SnippetList";
 import SnippetEditor from "../features/snippets/SnippetEditor";
-import type { Snippet } from "../types/snippet";
+import { ResponsiveLayout } from "../utils/responsive";
+import type { Snippet, SnippetFormData } from "../types/snippet";
 
 /**
  * Composant principal de la page Snippets
@@ -392,70 +393,134 @@ server {
         </div>
 
         {/* Contenu principal */}
-        <div className="flex-1 grid md:grid-cols-2 gap-6 min-h-0">
-          {/* Liste des snippets */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-white">
-                Snippets ({filteredSnippets.length})
-              </h2>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <SnippetList
-                snippets={filteredSnippets}
+        <div className="flex-1 min-h-0">
+          <ResponsiveLayout
+            mainContent={
+              <SnippetListView
+                filteredSnippets={filteredSnippets}
                 selectedSnippet={selectedSnippet}
                 onSelect={setSelectedSnippet}
                 onEdit={handleEditSnippet}
                 onDelete={handleDeleteSnippet}
               />
-            </div>
-          </div>
-
-          {/* Éditeur/Visualiseur */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-white">
-                {isEditing ? "Éditeur" : "Prévisualisation"}
-              </h2>
-              {selectedSnippet && !isEditing && (
-                <button
-                  onClick={() => handleEditSnippet(selectedSnippet)}
-                  className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-                >
-                  Modifier
-                </button>
-              )}
-            </div>
-            <div className="flex-1 overflow-hidden">
-              {isEditing ? (
-                <SnippetEditor
-                  snippet={selectedSnippet}
-                  onSave={handleSaveSnippet}
-                  onCancel={() => {
-                    setIsEditing(false);
-                    setSelectedSnippet(null);
-                  }}
-                />
-              ) : selectedSnippet ? (
-                <SnippetList
-                  snippets={[selectedSnippet]}
-                  selectedSnippet={selectedSnippet}
-                  onSelect={() => {}}
-                  onEdit={handleEditSnippet}
-                  onDelete={handleDeleteSnippet}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full bg-gray-800 border border-gray-700 rounded-lg">
-                  <p className="text-gray-400">
-                    Sélectionnez un snippet pour le visualiser ou créez-en un
-                    nouveau
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+            }
+            previewContent={
+              <SnippetPreviewView
+                selectedSnippet={selectedSnippet}
+                isEditing={isEditing}
+                onEdit={handleEditSnippet}
+                onSave={handleSaveSnippet}
+                onCancel={() => {
+                  setIsEditing(false);
+                  setSelectedSnippet(null);
+                }}
+                onDelete={handleDeleteSnippet}
+              />
+            }
+            tabs={[
+              { id: 'main', label: 'Snippets', icon: '📝' },
+              { id: 'preview', label: 'Aperçu', icon: '👁️' }
+            ]}
+          />
         </div>
       </div>
     </Layout>
+  );
+}
+
+/**
+ * Composant pour la liste des snippets
+ */
+function SnippetListView({
+  filteredSnippets,
+  selectedSnippet,
+  onSelect,
+  onEdit,
+  onDelete,
+}: {
+  filteredSnippets: Snippet[];
+  selectedSnippet: Snippet | null;
+  onSelect: (snippet: Snippet) => void;
+  onEdit: (snippet: Snippet) => void;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-white">
+          Snippets ({filteredSnippets.length})
+        </h2>
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <SnippetList
+          snippets={filteredSnippets}
+          selectedSnippet={selectedSnippet}
+          onSelect={onSelect}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Composant pour la prévisualisation/édition des snippets
+ */
+function SnippetPreviewView({
+  selectedSnippet,
+  isEditing,
+  onEdit,
+  onSave,
+  onCancel,
+  onDelete,
+}: {
+  selectedSnippet: Snippet | null;
+  isEditing: boolean;
+  onEdit: (snippet: Snippet) => void;
+  onSave: (snippet: SnippetFormData) => void;
+  onCancel: () => void;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-white">
+          {isEditing ? "Éditeur" : "Prévisualisation"}
+        </h2>
+        {selectedSnippet && !isEditing && (
+          <button
+            onClick={() => onEdit(selectedSnippet)}
+            className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
+          >
+            Modifier
+          </button>
+        )}
+      </div>
+      <div className="flex-1 overflow-hidden">
+        {isEditing ? (
+          <SnippetEditor
+            snippet={selectedSnippet}
+            onSave={onSave}
+            onCancel={onCancel}
+          />
+        ) : selectedSnippet ? (
+          <SnippetList
+            snippets={[selectedSnippet]}
+            selectedSnippet={selectedSnippet}
+            onSelect={() => {}}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full bg-gray-800 border border-gray-700 rounded-lg">
+            <p className="text-gray-400">
+              Sélectionnez un snippet pour le visualiser ou créez-en un
+              nouveau
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

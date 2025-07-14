@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { marked } from "marked";
+import { ResponsiveLayout } from "../../utils/responsive";
 
 export default function NoteEditor() {
   const [content, setContent] = useState("");
@@ -144,12 +145,12 @@ Commencez à écrire votre note technique !`);
     <div className="h-full flex flex-col">
       {/* En-tête avec actions */}
       <div className="flex-shrink-0 mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-2">
+            <h1 className="text-xl md:text-2xl font-bold text-white mb-2">
               Éditeur de Notes Techniques
             </h1>
-            <div className="flex items-center space-x-4 text-sm text-gray-300">
+            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 text-sm text-gray-300 gap-2 md:gap-0">
               <span>
                 Rédigez et prévisualisez vos notes en Markdown en temps réel
               </span>
@@ -160,48 +161,50 @@ Commencez à écrire votre note technique !`);
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col md:flex-row md:items-center gap-2">
             <input
               type="text"
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              className="px-3 py-1 border border-gray-600 bg-gray-800 text-white rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-auto px-3 py-1 border border-gray-600 bg-gray-800 text-white rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="nom-du-fichier.md"
             />
-            <button
-              onClick={newNote}
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-            >
-              Nouveau
-            </button>
-            <button
-              onClick={downloadNote}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
-            >
-              Télécharger
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={newNote}
+                className="flex-1 md:flex-none px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
+              >
+                Nouveau
+              </button>
+              <button
+                onClick={downloadNote}
+                className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
+              >
+                Télécharger
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Barre d'outils */}
-        <div className="flex flex-wrap gap-2 p-3 bg-gray-800 rounded-lg border border-gray-700">
+        <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 bg-gray-800 rounded-lg border border-gray-700">
           <button
             onClick={() => insertTemplate("**texte en gras**")}
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter du texte en gras"
           >
             <strong>B</strong>
           </button>
           <button
             onClick={() => insertTemplate("*texte en italique*")}
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter du texte en italique"
           >
             <em>I</em>
           </button>
           <button
             onClick={() => insertTemplate("`code inline`")}
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors font-mono"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors font-mono"
             title="Ajouter du code inline"
           >
             &lt;/&gt;
@@ -210,26 +213,29 @@ Commencez à écrire votre note technique !`);
             onClick={() =>
               insertTemplate("```javascript\n// Votre code ici\n```")
             }
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un bloc de code"
           >
-            Bloc de code
+            <span className="hidden md:inline">Bloc de code</span>
+            <span className="md:hidden">Code</span>
           </button>
           <button
             onClick={() => insertTemplate("- Élément de liste")}
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter une liste"
           >
-            • Liste
+            <span className="hidden md:inline">• Liste</span>
+            <span className="md:hidden">•</span>
           </button>
           <button
             onClick={() =>
               insertTemplate("[Texte du lien](https://exemple.com)")
             }
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un lien"
           >
-            🔗 Lien
+            <span className="hidden md:inline">🔗 Lien</span>
+            <span className="md:hidden">🔗</span>
           </button>
           <button
             onClick={() =>
@@ -237,70 +243,94 @@ Commencez à écrire votre note technique !`);
                 "| Colonne 1 | Colonne 2 |\n|-----------|-----------||\n| Données 1 | Données 2 |"
               )
             }
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un tableau"
           >
-            📊 Tableau
+            <span className="hidden md:inline">📊 Tableau</span>
+            <span className="md:hidden">📊</span>
           </button>
           <button
             onClick={() => insertTemplate("> Citation")}
-            className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+            className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter une citation"
           >
-            💬 Citation
+            <span className="hidden md:inline">💬 Citation</span>
+            <span className="md:hidden">💬</span>
           </button>
           <div className="flex-1"></div>
           <button
             onClick={clearContent}
-            className="px-3 py-1 bg-red-900 text-red-100 border border-red-700 rounded text-sm hover:bg-red-800 transition-colors"
+            className="px-2 md:px-3 py-1 bg-red-900 text-red-100 border border-red-700 rounded text-xs md:text-sm hover:bg-red-800 transition-colors"
             title="Effacer tout le contenu"
           >
-            🗑️ Effacer
+            <span className="hidden md:inline">🗑️ Effacer</span>
+            <span className="md:hidden">🗑️</span>
           </button>
         </div>
       </div>
 
       {/* Éditeur et prévisualisation */}
-      <div className="flex-1 grid md:grid-cols-2 gap-6 min-h-0">
-        {/* Éditeur */}
-        <div className="flex flex-col">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-white">
-              Éditeur Markdown
-            </h2>
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <span>{content.length} caractères</span>
-              <span>{content.split("\n").length} lignes</span>
-              <span>
-                {content.split(" ").filter((word) => word.length > 0).length}{" "}
-                mots
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
-            <CodeMirror
-              value={content}
-              height="100%"
-              extensions={[markdown()]}
-              theme="dark"
-              onChange={(value) => setContent(value)}
-              className="text-sm"
-            />
-          </div>
-        </div>
+      <div className="flex-1 min-h-0">
+        <ResponsiveLayout
+          mainContent={<EditorView content={content} setContent={setContent} />}
+          previewContent={<PreviewView content={content} />}
+          tabs={[
+            { id: 'main', label: 'Éditeur', icon: '✏️' },
+            { id: 'preview', label: 'Aperçu', icon: '👁️' }
+          ]}
+        />
+      </div>
+    </div>
+  );
+}
 
-        {/* Prévisualisation */}
-        <div className="flex flex-col">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-white">
-              Prévisualisation
-            </h2>
-            <span className="text-sm text-gray-400">Rendu en temps réel</span>
-          </div>
-          <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
-            <MarkdownPreview content={content} />
-          </div>
+/**
+ * Composant d'éditeur Markdown
+ */
+function EditorView({ content, setContent }: { content: string; setContent: (value: string) => void }) {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-white">
+          Éditeur Markdown
+        </h2>
+        <div className="flex items-center space-x-4 text-sm text-gray-400">
+          <span>{content.length} caractères</span>
+          <span>{content.split("\n").length} lignes</span>
+          <span>
+            {content.split(" ").filter((word) => word.length > 0).length}{" "}
+            mots
+          </span>
         </div>
+      </div>
+      <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
+        <CodeMirror
+          value={content}
+          height="100%"
+          extensions={[markdown()]}
+          theme="dark"
+          onChange={(value) => setContent(value)}
+          className="text-sm"
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Composant de prévisualisation Markdown
+ */
+function PreviewView({ content }: { content: string }) {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-white">
+          Prévisualisation
+        </h2>
+        <span className="text-sm text-gray-400">Rendu en temps réel</span>
+      </div>
+      <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
+        <MarkdownPreview content={content} />
       </div>
     </div>
   );
