@@ -1,3 +1,27 @@
+/**
+ * Éditeur de notes techniques en Markdown
+ * Permet de rédiger, prévisualiser et sauvegarder des notes en Markdown
+ * avec auto-sauvegarde et options de formatage.
+ * @file NoteEditor.tsx
+ * @author BOSSIS--GUYON Jules
+ * @date 2025-07-14
+ *
+ * Ce composant permet de créer et éditer des notes techniques en Markdown.
+ * Il inclut un éditeur avec syntaxe Markdown, une prévisualisation en temps réel
+ * et des fonctionnalités d'auto-sauvegarde dans le localStorage.
+ * L'utilisateur peut insérer des modèles de texte, effacer le contenu,
+ * télécharger la note au format Markdown et créer de nouvelles notes.
+ * * Les fonctionnalités incluent :
+ * - Éditeur Markdown avec syntaxe colorée
+ * - Prévisualisation en temps réel du rendu Markdown
+ * - Auto-sauvegarde dans le localStorage toutes les 2 secondes
+ * - Insertion de modèles de texte (gras, italique, code, listes, liens
+ *  tableaux, citations)
+ * - Effacement du contenu avec confirmation
+ * - Téléchargement de la note au format Markdown
+ * - Création de nouvelles notes avec confirmation
+ */
+
 import { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
@@ -10,9 +34,9 @@ export default function NoteEditor() {
 
   // Charger le contenu depuis le localStorage au démarrage
   useEffect(() => {
-    const savedContent = localStorage.getItem('noteEditor-content');
-    const savedFileName = localStorage.getItem('noteEditor-fileName');
-    
+    const savedContent = localStorage.getItem("noteEditor-content");
+    const savedFileName = localStorage.getItem("noteEditor-fileName");
+
     if (savedContent) {
       setContent(savedContent);
       setLastSaved(new Date());
@@ -59,7 +83,7 @@ function hello() {
 
 Commencez à écrire votre note technique !`);
     }
-    
+
     if (savedFileName) {
       setFileName(savedFileName);
     }
@@ -69,8 +93,8 @@ Commencez à écrire votre note technique !`);
   useEffect(() => {
     const interval = setInterval(() => {
       if (content.trim()) {
-        localStorage.setItem('noteEditor-content', content);
-        localStorage.setItem('noteEditor-fileName', fileName);
+        localStorage.setItem("noteEditor-content", content);
+        localStorage.setItem("noteEditor-fileName", fileName);
         setLastSaved(new Date());
       }
     }, 2000);
@@ -79,22 +103,22 @@ Commencez à écrire votre note technique !`);
   }, [content, fileName]);
 
   const insertTemplate = (template: string) => {
-    setContent(prev => prev + "\n\n" + template);
+    setContent((prev) => prev + "\n\n" + template);
   };
 
   const clearContent = () => {
     if (confirm("Êtes-vous sûr de vouloir effacer tout le contenu ?")) {
       setContent("");
-      localStorage.removeItem('noteEditor-content');
-      localStorage.removeItem('noteEditor-fileName');
+      localStorage.removeItem("noteEditor-content");
+      localStorage.removeItem("noteEditor-fileName");
       setLastSaved(null);
     }
   };
 
   const downloadNote = () => {
-    const blob = new Blob([content], { type: 'text/markdown' });
+    const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = fileName;
     a.click();
@@ -102,11 +126,16 @@ Commencez à écrire votre note technique !`);
   };
 
   const newNote = () => {
-    if (content.trim() && confirm("Créer une nouvelle note ? Le contenu actuel sera perdu si non sauvegardé.")) {
+    if (
+      content.trim() &&
+      confirm(
+        "Créer une nouvelle note ? Le contenu actuel sera perdu si non sauvegardé."
+      )
+    ) {
       setContent("");
       setFileName("nouvelle-note.md");
-      localStorage.removeItem('noteEditor-content');
-      localStorage.removeItem('noteEditor-fileName');
+      localStorage.removeItem("noteEditor-content");
+      localStorage.removeItem("noteEditor-fileName");
       setLastSaved(null);
     }
   };
@@ -121,7 +150,9 @@ Commencez à écrire votre note technique !`);
               Éditeur de Notes Techniques
             </h1>
             <div className="flex items-center space-x-4 text-sm text-gray-300">
-              <span>Rédigez et prévisualisez vos notes en Markdown en temps réel</span>
+              <span>
+                Rédigez et prévisualisez vos notes en Markdown en temps réel
+              </span>
               {lastSaved && (
                 <span className="text-green-400">
                   • Sauvegardé à {lastSaved.toLocaleTimeString()}
@@ -176,7 +207,9 @@ Commencez à écrire votre note technique !`);
             &lt;/&gt;
           </button>
           <button
-            onClick={() => insertTemplate("```javascript\n// Votre code ici\n```")}
+            onClick={() =>
+              insertTemplate("```javascript\n// Votre code ici\n```")
+            }
             className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un bloc de code"
           >
@@ -190,14 +223,20 @@ Commencez à écrire votre note technique !`);
             • Liste
           </button>
           <button
-            onClick={() => insertTemplate("[Texte du lien](https://exemple.com)")}
+            onClick={() =>
+              insertTemplate("[Texte du lien](https://exemple.com)")
+            }
             className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un lien"
           >
             🔗 Lien
           </button>
           <button
-            onClick={() => insertTemplate("| Colonne 1 | Colonne 2 |\n|-----------|-----------||\n| Données 1 | Données 2 |")}
+            onClick={() =>
+              insertTemplate(
+                "| Colonne 1 | Colonne 2 |\n|-----------|-----------||\n| Données 1 | Données 2 |"
+              )
+            }
             className="px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm hover:bg-gray-600 transition-colors"
             title="Ajouter un tableau"
           >
@@ -231,8 +270,11 @@ Commencez à écrire votre note technique !`);
             </h2>
             <div className="flex items-center space-x-4 text-sm text-gray-400">
               <span>{content.length} caractères</span>
-              <span>{content.split('\n').length} lignes</span>
-              <span>{content.split(' ').filter(word => word.length > 0).length} mots</span>
+              <span>{content.split("\n").length} lignes</span>
+              <span>
+                {content.split(" ").filter((word) => word.length > 0).length}{" "}
+                mots
+              </span>
             </div>
           </div>
           <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
@@ -267,16 +309,18 @@ Commencez à écrire votre note technique !`);
 function MarkdownPreview({ content }: { content: string }) {
   // Configuration de marked pour un rendu sécurisé
   const renderer = new marked.Renderer();
-  
+
   // Personnalisation du rendu des liens pour ouvrir dans un nouvel onglet
   renderer.link = ({ href, title, tokens }) => {
-    const text = tokens.map(token => token.raw).join('');
-    return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">${text}</a>`;
+    const text = tokens.map((token) => token.raw).join("");
+    return `<a href="${href}" title="${
+      title || ""
+    }" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">${text}</a>`;
   };
 
   // Personnalisation du rendu des blocs de code
   renderer.code = ({ text, lang }) => {
-    const validLanguage = lang || 'text';
+    const validLanguage = lang || "text";
     return `<pre class="bg-gray-800 border border-gray-700 rounded-lg p-4 overflow-x-auto mb-4"><code class="language-${validLanguage} text-sm text-gray-100">${text}</code></pre>`;
   };
 
@@ -291,7 +335,7 @@ function MarkdownPreview({ content }: { content: string }) {
 
   return (
     <div className="p-4 overflow-y-auto h-full bg-gray-900 text-gray-100">
-      <div 
+      <div
         className="markdown-preview"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />

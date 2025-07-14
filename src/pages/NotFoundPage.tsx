@@ -1,3 +1,21 @@
+/**
+ * NotFoundPage component displays a custom 404 error page for routes that do not exist.
+ *
+ * - Shows a 404 icon and error message in French.
+ * - Automatically redirects the user to the home page after a countdown (default: 5 seconds).
+ * - Provides buttons to return to the home page or go back to the previous page.
+ * - Displays useful links for navigation.
+ * - Includes a visual progress bar indicating the time left before redirection.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered 404 Not Found page.
+ *
+ * @example
+ * ```tsx
+ * <NotFoundPage />
+ * ```
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../layouts/Layout";
