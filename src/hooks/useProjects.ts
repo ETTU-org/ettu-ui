@@ -14,6 +14,7 @@ import type {
   SnippetFormData,
   ProjectStatus
 } from '../types/project';
+import { MOCK_PROJECTS, MOCK_NOTES, MOCK_SNIPPETS } from '../data/mockProjects';
 
 const STORAGE_KEYS = {
   projects: 'ettu-projects',
@@ -50,37 +51,53 @@ export function useProjects() {
         const savedProjects = localStorage.getItem(STORAGE_KEYS.projects);
         if (savedProjects) {
           const parsedProjects = JSON.parse(savedProjects);
-          setProjects(parsedProjects.map((p: any) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            updatedAt: new Date(p.updatedAt),
+          // Convertir les dates string en objets Date
+          const projectsWithDates = parsedProjects.map((project: any) => ({
+            ...project,
+            createdAt: new Date(project.createdAt),
+            updatedAt: new Date(project.updatedAt),
             stats: {
-              ...p.stats,
-              lastActivity: new Date(p.stats.lastActivity)
+              ...project.stats,
+              lastActivity: new Date(project.stats.lastActivity)
             }
-          })));
+          }));
+          setProjects(projectsWithDates);
+        } else {
+          // Utiliser les données de test si aucune donnée n'est sauvegardée
+          setProjects(MOCK_PROJECTS);
+          saveProjects(MOCK_PROJECTS);
         }
 
         // Charger les notes
         const savedNotes = localStorage.getItem(STORAGE_KEYS.notes);
         if (savedNotes) {
           const parsedNotes = JSON.parse(savedNotes);
-          setNotes(parsedNotes.map((n: any) => ({
-            ...n,
-            createdAt: new Date(n.createdAt),
-            updatedAt: new Date(n.updatedAt)
-          })));
+          const notesWithDates = parsedNotes.map((note: any) => ({
+            ...note,
+            createdAt: new Date(note.createdAt),
+            updatedAt: new Date(note.updatedAt)
+          }));
+          setNotes(notesWithDates);
+        } else {
+          // Utiliser les données de test
+          setNotes(MOCK_NOTES);
+          saveNotes(MOCK_NOTES);
         }
 
         // Charger les snippets
         const savedSnippets = localStorage.getItem(STORAGE_KEYS.snippets);
         if (savedSnippets) {
           const parsedSnippets = JSON.parse(savedSnippets);
-          setSnippets(parsedSnippets.map((s: any) => ({
-            ...s,
-            createdAt: new Date(s.createdAt),
-            updatedAt: new Date(s.updatedAt)
-          })));
+          const snippetsWithDates = parsedSnippets.map((snippet: any) => ({
+            ...snippet,
+            createdAt: new Date(snippet.createdAt),
+            updatedAt: new Date(snippet.updatedAt)
+          }));
+          setSnippets(snippetsWithDates);
+        } else {
+          // Utiliser les données de test
+          setSnippets(MOCK_SNIPPETS);
+          saveSnippets(MOCK_SNIPPETS);
         }
       } catch (error) {
         console.error('Erreur lors du chargement des données:', error);

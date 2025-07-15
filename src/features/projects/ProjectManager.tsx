@@ -153,7 +153,7 @@ export default function ProjectManager() {
   };
 
   return (
-    <div className="h-full flex bg-gray-900">
+    <div className="h-full min-h-[50vh] flex bg-gray-900 ">
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col">
         {/* Header */}

@@ -56,7 +56,7 @@ export default function ProjectList({
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div 
-            className="flex items-center space-x-3 cursor-pointer flex-1"
+            className="flex items-center space-x-3 cursor-pointer flex-1 min-w-0"
             onClick={() => onSelectProject(project)}
           >
             <div
@@ -65,11 +65,13 @@ export default function ProjectList({
             />
             <div className="min-w-0 flex-1">
               <h3 className="font-medium text-white truncate">{project.name}</h3>
-              <p className="text-sm text-gray-400 truncate">{project.description}</p>
+              {project.description && (
+                <p className="text-sm text-gray-400 truncate mt-1">{project.description}</p>
+              )}
             </div>
           </div>
           
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <button
               onClick={(e) => {
                 e.stopPropagation();
