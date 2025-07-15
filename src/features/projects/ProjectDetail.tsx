@@ -15,9 +15,10 @@ import {
   ExternalLink,
   MoreVertical
 } from 'lucide-react';
-import { useProjects } from '../../hooks/useProjects';
 import type { ProjectStructure, ProjectContentView } from '../../types/project';
 import { PROJECT_STATUSES } from '../../types/project';
+import { ProjectNoteEditor } from './ProjectNoteEditor';
+import { ProjectSnippetEditor } from './ProjectSnippetEditor';
 
 interface ProjectDetailProps {
   project: ProjectStructure;
@@ -27,12 +28,11 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project, onBack, onEdit, onDelete }: ProjectDetailProps) {
-  const { getProjectNotes, getProjectSnippets } = useProjects();
   const [activeTab, setActiveTab] = useState<ProjectContentView>('overview');
   const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [realNotesCount, setRealNotesCount] = useState(0);
+  const [realSnippetsCount, setRealSnippetsCount] = useState(0);
 
-  const notes = getProjectNotes(project.id);
-  const snippets = getProjectSnippets(project.id);
   const statusConfig = PROJECT_STATUSES.find(s => s.value === project.status);
 
   const formatDate = (date: Date) => {
@@ -45,8 +45,8 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
 
   const tabs = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: FileText },
-    { id: 'notes', label: `Notes (${notes.length})`, icon: FileText },
-    { id: 'snippets', label: `Snippets (${snippets.length})`, icon: Code },
+    { id: 'notes', label: `Notes (${realNotesCount})`, icon: FileText },
+    { id: 'snippets', label: `Snippets (${realSnippetsCount})`, icon: Code },
     { id: 'tasks', label: `Tâches (${project.stats.totalTasks})`, icon: CheckSquare }
   ];
 
@@ -180,91 +180,22 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
   );
 
   const renderNotes = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Notes du projet</h3>
-        <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          <Plus className="w-4 h-4" />
-          <span>Nouvelle note</span>
-        </button>
-      </div>
-
-      {notes.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <FileText className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <p>Aucune note dans ce projet</p>
-          <p className="text-sm">Créez votre première note pour commencer</p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {notes.map((note) => (
-            <div key={note.id} className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-white">{note.title}</h4>
-                  <p className="text-sm text-gray-400 mt-1 line-clamp-2">{note.content}</p>
-                  <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                    <span>{note.type}</span>
-                    <span>{formatDate(note.createdAt)}</span>
-                    {note.tags.length > 0 && (
-                      <span>{note.tags.length} tag(s)</span>
-                    )}
-                  </div>
-                </div>
-                <button className="text-gray-400 hover:text-white">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="h-full">
+      <ProjectNoteEditor 
+        projectId={project.id} 
+        projectName={project.name} 
+        onNotesCountChange={setRealNotesCount}
+      />
     </div>
   );
 
   const renderSnippets = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Snippets du projet</h3>
-        <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-          <Plus className="w-4 h-4" />
-          <span>Nouveau snippet</span>
-        </button>
-      </div>
-
-      {snippets.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <Code className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <p>Aucun snippet dans ce projet</p>
-          <p className="text-sm">Créez votre premier snippet pour commencer</p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {snippets.map((snippet) => (
-            <div key={snippet.id} className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-medium text-white">{snippet.title}</h4>
-                  {snippet.description && (
-                    <p className="text-sm text-gray-400 mt-1">{snippet.description}</p>
-                  )}
-                  <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                    <span className="bg-gray-700 px-2 py-1 rounded">{snippet.language}</span>
-                    <span>{snippet.type}</span>
-                    <span>{formatDate(snippet.createdAt)}</span>
-                    {snippet.tags.length > 0 && (
-                      <span>{snippet.tags.length} tag(s)</span>
-                    )}
-                  </div>
-                </div>
-                <button className="text-gray-400 hover:text-white">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="h-full">
+      <ProjectSnippetEditor 
+        projectId={project.id} 
+        projectName={project.name} 
+        onSnippetsCountChange={setRealSnippetsCount}
+      />
     </div>
   );
 
@@ -290,10 +221,6 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
     switch (activeTab) {
       case 'overview':
         return renderOverview();
-      case 'notes':
-        return renderNotes();
-      case 'snippets':
-        return renderSnippets();
       case 'tasks':
         return renderTasks();
       default:
@@ -373,8 +300,13 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6" onClick={() => setShowActionsMenu(false)}>
-        {renderContent()}
+      <div className={`flex-1 overflow-hidden ${activeTab === 'notes' || activeTab === 'snippets' ? '' : 'overflow-y-auto p-6'}`} onClick={() => setShowActionsMenu(false)}>
+        {activeTab === 'notes' ? renderNotes() : 
+         activeTab === 'snippets' ? renderSnippets() : (
+          <div className="p-6">
+            {renderContent()}
+          </div>
+        )}
       </div>
     </div>
   );

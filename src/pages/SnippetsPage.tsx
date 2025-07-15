@@ -1,297 +1,60 @@
-/**
- * Page de gestion des snippets de code
- *
- * Cette page permet aux utilisateurs de :
- * - Créer de nouveaux snippets de code
- * - Éditer des snippets existants
- * - Visualiser et organiser leurs snippets
- * - Filtrer par langage, projet ou tags
- * - Rechercher dans les snippets
- *
- * Architecture :
- * - Gestion d'état local avec useState (stockage en mémoire)
- * - Interface à deux colonnes : liste + éditeur/prévisualisation
- * - Filtrage et recherche en temps réel
- * - Support de 43 langages de programmation organisés en 6 catégories
- *
- * @component
- * @example
- * ```tsx
- * <SnippetsPage />
- * ```
- */
-
 import { useState, useEffect } from "react";
 import Layout from "../layouts/Layout";
-import SnippetList from "../features/snippets/SnippetList";
-import SnippetEditor from "../features/snippets/SnippetEditor";
-import SnippetPreview from "../features/snippets/SnippetPreview";
-import { ResponsiveLayout } from "../utils/responsive";
-import type { Snippet, SnippetFormData } from "../types/snippet";
-import { useSecureStorage, useStorageCleanup } from "../hooks/useSecureStorage";
+import type { Snippet } from "../types/snippet";
+import type { ProjectSnippet } from "../types/project";
+import { useProjects } from "../hooks/useProjects";
 
-// Données initiales pour les snippets
-const initialSnippets: Snippet[] = [
-  {
-    id: "1",
-    title: "Fonction de debounce",
-    language: "JavaScript",
-    code: `function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+// Fonction pour convertir les snippets de projet en snippets globaux
+const convertProjectSnippetToGlobalSnippet = (
+  projectSnippet: ProjectSnippet,
+  projectName: string
+): Snippet => {
+  return {
+    id: projectSnippet.id,
+    title: projectSnippet.title,
+    language: projectSnippet.language,
+    code: projectSnippet.code,
+    description: projectSnippet.description || "",
+    tags: projectSnippet.tags || [],
+    project: projectName,
+    createdAt: projectSnippet.createdAt,
+    updatedAt: projectSnippet.updatedAt,
   };
-}`,
-    description:
-      "Fonction utilitaire pour limiter la fréquence d'exécution d'une fonction",
-    tags: ["utils", "performance"],
-    project: "Projet Web",
-    createdAt: new Date("2025-01-10"),
-    updatedAt: new Date("2025-01-10"),
-  },
-  {
-    id: "2",
-    title: "Validation email regex",
-    language: "JavaScript",
-    code: `const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+};
 
-function validateEmail(email) {
-  return emailRegex.test(email);
-}`,
-    description: "Validation d'email avec regex simple",
-    tags: ["validation", "regex"],
-    project: "Formulaires",
-    createdAt: new Date("2025-01-12"),
-    updatedAt: new Date("2025-01-12"),
-  },
-  {
-    id: "3",
-    title: "Composant Button React",
-    language: "TSX",
-    code: `interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-}
-
-export default function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  disabled = false, 
-  onClick, 
-  children 
-}: ButtonProps) {
-  const baseClasses = "font-semibold rounded transition-colors focus:outline-none focus:ring-2";
-  const variantClasses = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
-    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-  };
-  const sizeClasses = {
-    sm: "px-3 py-1 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
-  };
-
-  return (
-    <button
-      className={\`\${baseClasses} \${variantClasses[variant]} \${sizeClasses[size]} \${disabled ? 'opacity-50 cursor-not-allowed' : ''}\`}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
-}`,
-    description: "Composant Button réutilisable avec variants et tailles",
-    tags: ["react", "component", "ui"],
-    project: "Design System",
-    createdAt: new Date("2025-01-14"),
-    updatedAt: new Date("2025-01-14"),
-  },
-  {
-    id: "4",
-    title: "Script de déploiement Docker",
-    language: "Bash",
-    code: `#!/bin/bash
-
-# Variables
-IMAGE_NAME="myapp"
-TAG="latest"
-CONTAINER_NAME="myapp-container"
-
-# Construire l'image
-echo "Building Docker image..."
-docker build -t $IMAGE_NAME:$TAG .
-
-# Arrêter le conteneur existant
-echo "Stopping existing container..."
-docker stop $CONTAINER_NAME 2>/dev/null || true
-docker rm $CONTAINER_NAME 2>/dev/null || true
-
-# Démarrer le nouveau conteneur
-echo "Starting new container..."
-docker run -d --name $CONTAINER_NAME -p 3000:3000 $IMAGE_NAME:$TAG
-
-echo "Deployment completed!"`,
-    description: "Script automatisé pour déployer une application Docker",
-    tags: ["docker", "deployment", "automation"],
-    project: "DevOps",
-    createdAt: new Date("2025-01-13"),
-    updatedAt: new Date("2025-01-13"),
-  },
-  {
-    id: "5",
-    title: "Analyse de données avec Pandas",
-    language: "Python",
-    code: `import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
-def analyze_sales_data(filepath):
-    """Analyse des données de ventes"""
-    
-    # Charger les données
-    df = pd.read_csv(filepath)
-    
-    # Nettoyage des données
-    df['date'] = pd.to_datetime(df['date'])
-    df = df.dropna()
-    
-    # Calculs statistiques
-    total_sales = df['amount'].sum()
-    avg_sale = df['amount'].mean()
-    monthly_sales = df.groupby(df['date'].dt.month)['amount'].sum()
-    
-    # Visualisation
-    plt.figure(figsize=(10, 6))
-    monthly_sales.plot(kind='bar')
-    plt.title('Ventes mensuelles')
-    plt.xlabel('Mois')
-    plt.ylabel('Montant')
-    plt.show()
-    
-    return {
-        'total': total_sales,
-        'average': avg_sale,
-        'monthly': monthly_sales
-    }`,
-    description: "Fonction d'analyse de données de ventes avec visualisation",
-    tags: ["data-analysis", "pandas", "visualization"],
-    project: "Data Science",
-    createdAt: new Date("2025-01-15"),
-    updatedAt: new Date("2025-01-15"),
-  },
-  {
-    id: "6",
-    title: "Configuration Nginx",
-    language: "NGINX",
-    code: `server {
-    listen 80;
-    server_name example.com www.example.com;
-    
-    # Redirection HTTPS
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name example.com www.example.com;
-    
-    # SSL Configuration
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/private.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-    
-    # Root directory
-    root /var/www/html;
-    index index.html index.htm;
-    
-    # Location blocks
-    location / {
-        try_files $uri $uri/ =404;
-    }
-    
-    location /api/ {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-    
-    # Cache static files
-    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-}`,
-    description: "Configuration Nginx complète avec SSL, proxy et cache",
-    tags: ["nginx", "ssl", "proxy", "cache"],
-    project: "Infrastructure",
-    createdAt: new Date("2025-01-16"),
-    updatedAt: new Date("2025-01-16"),
-  },
-];
-
-/**
- * Composant principal de la page Snippets
- *
- * Gère l'état global des snippets et orchestre les interactions
- * entre la liste, l'éditeur et les fonctionnalités de filtrage
- *
- * @returns Le composant de page des snippets
- */
 export default function SnippetsPage() {
-  // Utilisation du stockage sécurisé pour les snippets
-  const [storedSnippets, setStoredSnippets] = useSecureStorage<Snippet[]>("snippets", initialSnippets);
-  const [snippets, setSnippets] = useState<Snippet[]>(storedSnippets || initialSnippets);
-  
-  // Nettoyage automatique des données expirées
-  useStorageCleanup(60); // Nettoyage toutes les heures
-
-  // Synchroniser avec le stockage sécurisé
-  useEffect(() => {
-    if (storedSnippets) {
-      setSnippets(storedSnippets);
-    }
-  }, [storedSnippets]);
-
-  // Sauvegarder dans le stockage sécurisé à chaque modification
-  useEffect(() => {
-    if (snippets.length > 0) {
-      setStoredSnippets(snippets);
-    }
-  }, [snippets, setStoredSnippets]);
-
+  const { projects, snippets: projectSnippets } = useProjects();
+  const [allSnippets, setAllSnippets] = useState<Snippet[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState<Snippet | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
 
+  // Récupérer tous les snippets des projets
+  useEffect(() => {
+    const snippets: Snippet[] = [];
+
+    // Ajouter les snippets des projets
+    projectSnippets.forEach((snippet) => {
+      const project = projects.find((p) => p.id === snippet.projectId);
+      if (project) {
+        snippets.push(
+          convertProjectSnippetToGlobalSnippet(snippet, project.name)
+        );
+      }
+    });
+
+    setAllSnippets(snippets);
+  }, [projectSnippets, projects]);
+
   // Filtrer les snippets
-  const filteredSnippets = snippets.filter((snippet) => {
+  const filteredSnippets = allSnippets.filter((snippet) => {
     const matchesSearch =
+      !searchTerm ||
       snippet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       snippet.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      snippet.tags.some((tag: string) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      snippet.code.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesLanguage =
       !selectedLanguage || snippet.language === selectedLanguage;
     const matchesProject =
@@ -300,249 +63,157 @@ export default function SnippetsPage() {
     return matchesSearch && matchesLanguage && matchesProject;
   });
 
-  // Obtenir les langages uniques
-  const languages = Array.from(new Set(snippets.map((s) => s.language))).sort();
-
-  // Obtenir les projets uniques
-  const projects = Array.from(new Set(snippets.map((s) => s.project))).sort();
-
-  const handleSaveSnippet = (
-    snippet: Omit<Snippet, "id" | "createdAt" | "updatedAt">
-  ) => {
-    if (selectedSnippet) {
-      // Modifier un snippet existant
-      setSnippets((prev) =>
-        prev.map((s) =>
-          s.id === selectedSnippet.id
-            ? {
-                ...snippet,
-                id: selectedSnippet.id,
-                createdAt: selectedSnippet.createdAt,
-                updatedAt: new Date(),
-              }
-            : s
-        )
-      );
-    } else {
-      // Créer un nouveau snippet
-      const newSnippet: Snippet = {
-        ...snippet,
-        id: Date.now().toString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setSnippets((prev) => [newSnippet, ...prev]);
-    }
-    setIsEditing(false);
-    setSelectedSnippet(null);
-  };
-
-  const handleDeleteSnippet = (id: string) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce snippet ?")) {
-      setSnippets((prev) => prev.filter((s) => s.id !== id));
-      if (selectedSnippet?.id === id) {
-        setSelectedSnippet(null);
-      }
-    }
-  };
-
-  const handleEditSnippet = (snippet: Snippet) => {
-    setSelectedSnippet(snippet);
-    setIsEditing(true);
-  };
-
-  const handleNewSnippet = () => {
-    setSelectedSnippet(null);
-    setIsEditing(true);
-  };
+  // Obtenir les projets et langages disponibles
+  const availableProjects = Array.from(
+    new Set(allSnippets.map((s) => s.project).filter(Boolean))
+  );
+  const availableLanguages = Array.from(
+    new Set(allSnippets.map((s) => s.language).filter(Boolean))
+  );
 
   return (
     <Layout>
-      <div className="h-full flex flex-col">
-        {/* En-tête */}
-        <div className="flex-shrink-0 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-2">
-                Gestionnaire de Snippets
-              </h1>
-              <p className="text-gray-300">
-                Organisez et gérez vos extraits de code techniques
-              </p>
-            </div>
-            <button
-              onClick={handleNewSnippet}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            >
-              + Nouveau Snippet
-            </button>
-          </div>
-
-          {/* Filtres */}
-          <div className="flex flex-wrap gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
-            <div className="flex-1 min-w-64">
-              <input
-                type="text"
-                placeholder="Rechercher par titre, description ou tags..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Tous les langages</option>
-              {languages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              className="px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Tous les projets</option>
-              {projects.map((project) => (
-                <option key={project} value={project}>
-                  {project}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Snippets</h1>
+          <p className="text-gray-600">
+            Gérez vos extraits de code créés dans vos projets
+          </p>
         </div>
 
-        {/* Contenu principal */}
-        <div className="flex-1 min-h-0">
-          <ResponsiveLayout
-            mainContent={
-              <SnippetListView
-                filteredSnippets={filteredSnippets}
-                selectedSnippet={selectedSnippet}
-                onSelect={setSelectedSnippet}
-                onEdit={handleEditSnippet}
-                onDelete={handleDeleteSnippet}
-              />
-            }
-            previewContent={
-              <SnippetPreviewView
-                selectedSnippet={selectedSnippet}
-                isEditing={isEditing}
-                onEdit={handleEditSnippet}
-                onSave={handleSaveSnippet}
-                onCancel={() => {
-                  setIsEditing(false);
-                  setSelectedSnippet(null);
-                }}
-                onDelete={handleDeleteSnippet}
-              />
-            }
-            tabs={[
-              { id: 'main', label: 'Snippets', icon: '📝' },
-              { id: 'preview', label: 'Aperçu', icon: '👁️' }
-            ]}
-          />
+        {/* Filtres */}
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="flex-1 min-w-64">
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Tous les langages</option>
+            {availableLanguages.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedProject}
+            onChange={(e) => setSelectedProject(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Tous les projets</option>
+            {availableProjects.map((project) => (
+              <option key={project} value={project}>
+                {project}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Liste des snippets */}
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h2 className="text-xl font-semibold mb-4">
+              Snippets ({filteredSnippets.length})
+            </h2>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {filteredSnippets.map((snippet) => (
+                <div
+                  key={snippet.id}
+                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                    selectedSnippet?.id === snippet.id
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                  onClick={() => setSelectedSnippet(snippet)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-gray-900">
+                      {snippet.title}
+                    </h3>
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      {snippet.language}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {snippet.description}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-blue-600">
+                      {snippet.project}
+                    </span>
+                    <div className="flex gap-1">
+                      {snippet.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredSnippets.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  Aucun snippet trouvé
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Aperçu du snippet */}
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h2 className="text-xl font-semibold mb-4">Aperçu</h2>
+            {selectedSnippet ? (
+              <div>
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {selectedSnippet.title}
+                  </h3>
+                  <p className="text-gray-600">{selectedSnippet.description}</p>
+                  <div className="flex gap-2 mt-2">
+                    <span className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      {selectedSnippet.language}
+                    </span>
+                    <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                      {selectedSnippet.project}
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <pre className="text-sm text-gray-800 overflow-x-auto">
+                    <code>{selectedSnippet.code}</code>
+                  </pre>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  {selectedSnippet.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                Sélectionnez un snippet pour le voir
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Layout>
-  );
-}
-
-/**
- * Composant pour la liste des snippets
- */
-function SnippetListView({
-  filteredSnippets,
-  selectedSnippet,
-  onSelect,
-  onEdit,
-  onDelete,
-}: {
-  filteredSnippets: Snippet[];
-  selectedSnippet: Snippet | null;
-  onSelect: (snippet: Snippet) => void;
-  onEdit: (snippet: Snippet) => void;
-  onDelete: (id: string) => void;
-}) {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-white">
-          Snippets ({filteredSnippets.length})
-        </h2>
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <SnippetList
-          snippets={filteredSnippets}
-          selectedSnippet={selectedSnippet}
-          onSelect={onSelect}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Composant pour la prévisualisation/édition des snippets
- */
-function SnippetPreviewView({
-  selectedSnippet,
-  isEditing,
-  onEdit,
-  onSave,
-  onCancel,
-  onDelete,
-}: {
-  selectedSnippet: Snippet | null;
-  isEditing: boolean;
-  onEdit: (snippet: Snippet) => void;
-  onSave: (snippet: SnippetFormData) => void;
-  onCancel: () => void;
-  onDelete: (id: string) => void;
-}) {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-white">
-          {isEditing ? "Éditeur" : "Prévisualisation"}
-        </h2>
-        {selectedSnippet && !isEditing && (
-          <button
-            onClick={() => onEdit(selectedSnippet)}
-            className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-          >
-            Modifier
-          </button>
-        )}
-      </div>
-      <div className="flex-1 overflow-hidden">
-        {isEditing ? (
-          <SnippetEditor
-            snippet={selectedSnippet}
-            onSave={onSave}
-            onCancel={onCancel}
-          />
-        ) : selectedSnippet ? (
-          <SnippetPreview
-            snippet={selectedSnippet}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full bg-gray-800 border border-gray-700 rounded-lg">
-            <p className="text-gray-400">
-              Sélectionnez un snippet pour le visualiser ou créez-en un
-              nouveau
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }

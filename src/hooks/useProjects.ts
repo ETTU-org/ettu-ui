@@ -14,7 +14,7 @@ import type {
   SnippetFormData,
   ProjectStatus
 } from '../types/project';
-import { MOCK_PROJECTS, MOCK_NOTES, MOCK_SNIPPETS } from '../data/mockProjects';
+import { MOCK_PROJECTS, MOCK_SNIPPETS } from '../data/mockProjects';
 
 const STORAGE_KEYS = {
   projects: 'ettu-projects',
@@ -52,7 +52,7 @@ export function useProjects() {
         if (savedProjects) {
           const parsedProjects = JSON.parse(savedProjects);
           // Convertir les dates string en objets Date
-          const projectsWithDates = parsedProjects.map((project: any) => ({
+          const projectsWithDates = parsedProjects.map((project: ProjectStructure) => ({
             ...project,
             createdAt: new Date(project.createdAt),
             updatedAt: new Date(project.updatedAt),
@@ -68,27 +68,14 @@ export function useProjects() {
           saveProjects(MOCK_PROJECTS);
         }
 
-        // Charger les notes
-        const savedNotes = localStorage.getItem(STORAGE_KEYS.notes);
-        if (savedNotes) {
-          const parsedNotes = JSON.parse(savedNotes);
-          const notesWithDates = parsedNotes.map((note: any) => ({
-            ...note,
-            createdAt: new Date(note.createdAt),
-            updatedAt: new Date(note.updatedAt)
-          }));
-          setNotes(notesWithDates);
-        } else {
-          // Utiliser les données de test
-          setNotes(MOCK_NOTES);
-          saveNotes(MOCK_NOTES);
-        }
+        // Charger les notes - maintenant géré par projet, donc on initialise vide
+        setNotes([]);
 
         // Charger les snippets
         const savedSnippets = localStorage.getItem(STORAGE_KEYS.snippets);
         if (savedSnippets) {
           const parsedSnippets = JSON.parse(savedSnippets);
-          const snippetsWithDates = parsedSnippets.map((snippet: any) => ({
+          const snippetsWithDates = parsedSnippets.map((snippet: ProjectSnippet) => ({
             ...snippet,
             createdAt: new Date(snippet.createdAt),
             updatedAt: new Date(snippet.updatedAt)

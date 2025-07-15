@@ -2,7 +2,7 @@
  * Données de test pour les projets
  */
 
-import type { ProjectStructure, ProjectNote, ProjectSnippet } from '../types/project';
+import type { ProjectStructure, ProjectSnippet } from '../types/project';
 
 export const MOCK_PROJECTS: ProjectStructure[] = [
   {
@@ -164,59 +164,6 @@ export const MOCK_PROJECTS: ProjectStructure[] = [
       team: ['Data Analyst', 'Développeur Backend'],
       repository: 'https://github.com/ETTU-org/ettu-analytics'
     }
-  }
-];
-
-export const MOCK_NOTES: ProjectNote[] = [
-  {
-    id: 'note-1',
-    projectId: '1',
-    title: 'Architecture des composants React',
-    content: 'Documentation de l\'architecture des composants principaux de l\'application ETTU. Nous utilisons une approche modulaire avec des hooks personnalisés pour la gestion d\'état.',
-    type: 'documentation',
-    tags: ['react', 'architecture', 'composants'],
-    createdAt: new Date('2025-07-10'),
-    updatedAt: new Date('2025-07-12')
-  },
-  {
-    id: 'note-2',
-    projectId: '1',
-    title: 'Problème de performance sur le filtrage',
-    content: 'Le filtrage des projets devient lent avec plus de 100 éléments. Envisager l\'utilisation d\'un debounce ou d\'une pagination.',
-    type: 'analysis',
-    tags: ['performance', 'filtrage', 'optimisation'],
-    createdAt: new Date('2025-07-08'),
-    updatedAt: new Date('2025-07-08')
-  },
-  {
-    id: 'note-3',
-    projectId: '2',
-    title: 'Stratégie d\'authentification JWT',
-    content: 'Implémentation de l\'authentification avec tokens JWT. Durée de vie de 1h pour les access tokens et 7 jours pour les refresh tokens.',
-    type: 'documentation',
-    tags: ['authentification', 'jwt', 'sécurité'],
-    createdAt: new Date('2025-07-05'),
-    updatedAt: new Date('2025-07-05')
-  },
-  {
-    id: 'note-4',
-    projectId: '3',
-    title: 'Idée: Synchronisation offline',
-    content: 'Permettre à l\'application mobile de fonctionner en mode offline avec synchronisation automatique une fois reconnectée.',
-    type: 'idea',
-    tags: ['mobile', 'offline', 'synchronisation'],
-    createdAt: new Date('2025-06-15'),
-    updatedAt: new Date('2025-06-15')
-  },
-  {
-    id: 'note-5',
-    projectId: '4',
-    title: 'Configuration Kubernetes',
-    content: 'Documentation complète de la configuration Kubernetes pour le déploiement des microservices ETTU.',
-    type: 'documentation',
-    tags: ['kubernetes', 'déploiement', 'microservices'],
-    createdAt: new Date('2025-05-10'),
-    updatedAt: new Date('2025-05-12')
   }
 ];
 
