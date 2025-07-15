@@ -1,17 +1,17 @@
 /**
  * SnippetList - Composant d'affichage et de gestion des snippets
- * 
+ *
  * Ce composant affiche une liste de snippets avec deux modes :
  * - Mode liste : Vue compacte avec aperçu
  * - Mode détail : Vue complète d'un snippet spécifique
- * 
+ *
  * Fonctionnalités :
  * - Affichage avec coloration syntaxique
  * - Copie vers le presse-papiers
  * - Actions rapides (éditer, supprimer)
  * - Badges colorés par langage
  * - Support responsive
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -47,14 +47,14 @@ interface SnippetListProps {
 
 /**
  * Composant de liste des snippets de code
- * 
+ *
  * Affiche une liste de snippets avec :
  * - Prévisualisation du code
  * - Actions rapides (éditer, supprimer, copier)
  * - Badges colorés pour les langages
  * - Informations sur les tags et projets
  * - Design responsive
- * 
+ *
  * @param props - Les propriétés du composant
  * @returns Le composant de liste des snippets
  */
@@ -70,7 +70,7 @@ export default function SnippetList({
 
   /**
    * Obtient la couleur de badge appropriée pour un langage donné
-   * 
+   *
    * @param language - Le nom du langage de programmation
    * @returns Les classes CSS pour le badge coloré
    */
@@ -86,7 +86,7 @@ export default function SnippetList({
       less: "bg-indigo-600",
       jsx: "bg-cyan-600",
       tsx: "bg-sky-600",
-      
+
       // Backend & Systems
       python: "bg-green-600",
       rust: "bg-orange-700",
@@ -102,19 +102,19 @@ export default function SnippetList({
       dart: "bg-sky-700",
       scala: "bg-red-800",
       elixir: "bg-purple-800",
-      
+
       // Scripting & Shell
       bash: "bg-gray-700",
       shell: "bg-gray-700",
       powershell: "bg-blue-900",
       makefile: "bg-green-800",
-      
+
       // Data & Analytics
       r: "bg-blue-500",
       julia: "bg-green-500",
       matlab: "bg-orange-800",
       sql: "bg-blue-800",
-      
+
       // DevOps & Config
       dockerfile: "bg-cyan-800",
       yaml: "bg-red-500",
@@ -125,21 +125,21 @@ export default function SnippetList({
       ansible: "bg-red-600",
       nginx: "bg-green-700",
       apache: "bg-red-700",
-      
+
       // Documentation
       markdown: "bg-gray-800",
       restructuredtext: "bg-yellow-700",
       latex: "bg-green-900",
       xml: "bg-orange-700",
     };
-    
+
     return colors[lang] || "bg-gray-600";
   };
 
   /**
    * Copie le code d'un snippet dans le presse-papiers
    * Affiche une notification temporaire de confirmation
-   * 
+   *
    * @param snippet - Le snippet dont le code doit être copié
    */
   const handleCopyCode = async (snippet: Snippet) => {
@@ -172,10 +172,16 @@ export default function SnippetList({
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded text-xs font-medium text-white ${getLanguageBadgeColor(snippet.language)}`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium text-white ${getLanguageBadgeColor(
+                      snippet.language
+                    )}`}
+                  >
                     {snippet.language}
                   </span>
-                  <h3 className="font-semibold text-white text-sm">{snippet.title}</h3>
+                  <h3 className="font-semibold text-white text-sm">
+                    {snippet.title}
+                  </h3>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -210,7 +216,9 @@ export default function SnippetList({
                   </button>
                 </div>
               </div>
-              <p className="text-gray-300 text-sm mb-2">{snippet.description}</p>
+              <p className="text-gray-300 text-sm mb-2">
+                {snippet.description}
+              </p>
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <div className="flex items-center gap-2">
                   <span>{snippet.project}</span>

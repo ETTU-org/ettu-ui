@@ -1,25 +1,25 @@
 /**
  * Page d'administration du stockage sécurisé
- * 
+ *
  * @file AdminStoragePage.tsx
  * @author BOSSIS--GUYON Jules
  * @date 2025-07-14
  */
 
-import { useState, useEffect } from 'react';
-import { 
-  Database, 
-  Shield, 
-  Trash2, 
-  Download, 
-  RefreshCw, 
+import { useState, useEffect } from "react";
+import {
+  Database,
+  Shield,
+  Trash2,
+  Download,
+  RefreshCw,
   AlertTriangle,
   CheckCircle,
-  Info
-} from 'lucide-react';
-import Layout from '../layouts/Layout';
-import { secureLocalStorage } from '../utils/secureLocalStorage';
-import { MigrationUtils } from '../utils/migrationUtils';
+  Info,
+} from "lucide-react";
+import Layout from "../layouts/Layout";
+import { secureLocalStorage } from "../utils/secureLocalStorage";
+import { MigrationUtils } from "../utils/migrationUtils";
 
 interface MigrationResult {
   migrated: number;
@@ -38,25 +38,26 @@ export default function AdminStoragePage() {
   });
   const [keys, setKeys] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
+  const [migrationResult, setMigrationResult] =
+    useState<MigrationResult | null>(null);
 
   const loadStats = () => {
     setIsLoading(true);
     try {
       const currentStats = secureLocalStorage.getStats();
       const currentKeys = secureLocalStorage.getAllKeys();
-      
+
       setStats(currentStats);
       setKeys(currentKeys);
     } catch (error) {
-      console.error('Erreur lors du chargement des statistiques:', error);
+      console.error("Erreur lors du chargement des statistiques:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCleanup = () => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer les données expirées ?')) {
+    if (confirm("Êtes-vous sûr de vouloir supprimer les données expirées ?")) {
       const cleaned = secureLocalStorage.cleanup();
       loadStats();
       alert(`${cleaned} éléments expirés supprimés.`);
@@ -64,17 +65,29 @@ export default function AdminStoragePage() {
   };
 
   const handleClearAll = () => {
-    if (confirm('⚠️ ATTENTION: Cela supprimera TOUTES les données stockées de manière sécurisée. Continuer ?')) {
-      if (confirm('Dernière confirmation: Toutes vos notes, snippets et préférences seront perdus !')) {
+    if (
+      confirm(
+        "⚠️ ATTENTION: Cela supprimera TOUTES les données stockées de manière sécurisée. Continuer ?"
+      )
+    ) {
+      if (
+        confirm(
+          "Dernière confirmation: Toutes vos notes, snippets et préférences seront perdus !"
+        )
+      ) {
         secureLocalStorage.clear();
         loadStats();
-        alert('Toutes les données ont été supprimées.');
+        alert("Toutes les données ont été supprimées.");
       }
     }
   };
 
   const handleMigration = () => {
-    if (confirm('Lancer la migration automatique des données localStorage vers secureStorage ?')) {
+    if (
+      confirm(
+        "Lancer la migration automatique des données localStorage vers secureStorage ?"
+      )
+    ) {
       const result = MigrationUtils.performFullMigration(true);
       setMigrationResult(result);
       loadStats();
@@ -86,11 +99,11 @@ export default function AdminStoragePage() {
       timestamp: new Date().toISOString(),
       stats: stats,
       keys: keys,
-      data: {} as Record<string, string>
+      data: {} as Record<string, string>,
     };
 
     // Exporter toutes les données
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const value = secureLocalStorage.getItem(key);
       if (value) {
         data.data[key] = value;
@@ -98,13 +111,15 @@ export default function AdminStoragePage() {
     });
 
     const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: 'application/json'
+      type: "application/json",
     });
 
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `ettu-secure-export-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `ettu-secure-export-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -119,7 +134,9 @@ export default function AdminStoragePage() {
         <div className="bg-gray-800 rounded-lg p-8 text-gray-100">
           <div className="flex items-center gap-3 mb-8">
             <Shield className="w-8 h-8 text-blue-400" />
-            <h1 className="text-3xl font-bold">Administration du stockage sécurisé</h1>
+            <h1 className="text-3xl font-bold">
+              Administration du stockage sécurisé
+            </h1>
           </div>
 
           {/* Statistiques */}
@@ -129,7 +146,9 @@ export default function AdminStoragePage() {
                 <Database className="w-6 h-6 text-blue-400" />
                 <h3 className="text-lg font-semibold">Éléments stockés</h3>
               </div>
-              <p className="text-2xl font-bold text-blue-400">{stats.totalItems}</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {stats.totalItems}
+              </p>
             </div>
 
             <div className="bg-gray-700 rounded-lg p-6">
@@ -147,7 +166,9 @@ export default function AdminStoragePage() {
                 <AlertTriangle className="w-6 h-6 text-yellow-400" />
                 <h3 className="text-lg font-semibold">Éléments expirés</h3>
               </div>
-              <p className="text-2xl font-bold text-yellow-400">{stats.expiredItems}</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {stats.expiredItems}
+              </p>
             </div>
 
             <div className="bg-gray-700 rounded-lg p-6">
@@ -156,10 +177,9 @@ export default function AdminStoragePage() {
                 <h3 className="text-lg font-semibold">Plus ancien</h3>
               </div>
               <p className="text-sm text-purple-400">
-                {stats.oldestItem 
+                {stats.oldestItem
                   ? new Date(stats.oldestItem).toLocaleDateString()
-                  : 'Aucun'
-                }
+                  : "Aucun"}
               </p>
             </div>
           </div>
@@ -178,16 +198,16 @@ export default function AdminStoragePage() {
                   disabled={isLoading}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
-                  {isLoading ? 'Chargement...' : 'Actualiser les statistiques'}
+                  {isLoading ? "Chargement..." : "Actualiser les statistiques"}
                 </button>
-                
+
                 <button
                   onClick={handleCleanup}
                   className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
                 >
                   Nettoyer les données expirées
                 </button>
-                
+
                 <button
                   onClick={handleExportData}
                   className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
@@ -211,7 +231,7 @@ export default function AdminStoragePage() {
                 >
                   Migrer depuis localStorage
                 </button>
-                
+
                 <button
                   onClick={handleClearAll}
                   className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
@@ -226,30 +246,42 @@ export default function AdminStoragePage() {
           {/* Résultat de la migration */}
           {migrationResult && (
             <div className="bg-gray-700 rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-semibold mb-4">Résultat de la migration</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Résultat de la migration
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div className="bg-green-900 rounded p-3">
                   <p className="font-medium text-green-200">Migrés</p>
-                  <p className="text-2xl font-bold text-green-400">{migrationResult.migrated}</p>
+                  <p className="text-2xl font-bold text-green-400">
+                    {migrationResult.migrated}
+                  </p>
                 </div>
                 <div className="bg-yellow-900 rounded p-3">
                   <p className="font-medium text-yellow-200">Ignorés</p>
-                  <p className="text-2xl font-bold text-yellow-400">{migrationResult.skipped}</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {migrationResult.skipped}
+                  </p>
                 </div>
                 <div className="bg-red-900 rounded p-3">
                   <p className="font-medium text-red-200">Erreurs</p>
-                  <p className="text-2xl font-bold text-red-400">{migrationResult.errors}</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    {migrationResult.errors}
+                  </p>
                 </div>
               </div>
               {migrationResult.errorDetails.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="font-medium text-red-400 mb-2">Erreurs détaillées:</h4>
+                  <h4 className="font-medium text-red-400 mb-2">
+                    Erreurs détaillées:
+                  </h4>
                   <ul className="text-sm space-y-1">
-                    {migrationResult.errorDetails.map((error, index: number) => (
-                      <li key={index} className="text-red-300">
-                        {error.key}: {error.error}
-                      </li>
-                    ))}
+                    {migrationResult.errorDetails.map(
+                      (error, index: number) => (
+                        <li key={index} className="text-red-300">
+                          {error.key}: {error.error}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               )}
@@ -258,13 +290,18 @@ export default function AdminStoragePage() {
 
           {/* Liste des clés */}
           <div className="bg-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Clés stockées ({keys.length})</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Clés stockées ({keys.length})
+            </h3>
             {keys.length === 0 ? (
               <p className="text-gray-400">Aucune donnée stockée</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto">
                 {keys.map((key, index) => (
-                  <div key={index} className="bg-gray-600 rounded px-3 py-2 text-sm">
+                  <div
+                    key={index}
+                    className="bg-gray-600 rounded px-3 py-2 text-sm"
+                  >
                     <code className="text-blue-300">{key}</code>
                   </div>
                 ))}

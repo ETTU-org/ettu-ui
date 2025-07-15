@@ -2,10 +2,20 @@
  * Composant formulaire pour créer/éditer une tâche TODO
  */
 
-import { useState, useEffect } from 'react';
-import { X, Save, Plus, Calendar, Clock, User, Tag, FolderOpen, Trash2 } from 'lucide-react';
-import { TODO_TYPES, TODO_PRIORITIES, TODO_STATUSES } from '../../types/todo';
-import type { TodoTask, TodoProject, TodoFormData } from '../../types/todo';
+import { useState, useEffect } from "react";
+import {
+  X,
+  Save,
+  Plus,
+  Calendar,
+  Clock,
+  User,
+  Tag,
+  FolderOpen,
+  Trash2,
+} from "lucide-react";
+import { TODO_TYPES, TODO_PRIORITIES, TODO_STATUSES } from "../../types/todo";
+import type { TodoTask, TodoProject, TodoFormData } from "../../types/todo";
 
 interface TodoTaskFormProps {
   task?: TodoTask | null;
@@ -15,51 +25,57 @@ interface TodoTaskFormProps {
   onDelete?: (taskId: string) => void;
 }
 
-export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelete }: TodoTaskFormProps) {
+export default function TodoTaskForm({
+  task,
+  projects,
+  onSave,
+  onCancel,
+  onDelete,
+}: TodoTaskFormProps) {
   const [formData, setFormData] = useState<TodoFormData>({
-    title: '',
-    description: '',
-    type: 'feature',
-    priority: 'medium',
-    status: 'backlog',
+    title: "",
+    description: "",
+    type: "feature",
+    priority: "medium",
+    status: "backlog",
     tags: [],
-    project: '',
-    assignee: '',
+    project: "",
+    assignee: "",
     estimatedTime: undefined,
     dueDate: undefined,
     relatedNotes: [],
-    relatedSnippets: []
+    relatedSnippets: [],
   });
 
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (task) {
       setFormData({
         title: task.title,
-        description: task.description || '',
+        description: task.description || "",
         type: task.type,
         priority: task.priority,
         status: task.status,
         tags: task.tags,
-        project: task.project || '',
-        assignee: task.assignee || '',
+        project: task.project || "",
+        assignee: task.assignee || "",
         estimatedTime: task.estimatedTime,
         dueDate: task.dueDate,
         relatedNotes: task.relatedNotes || [],
-        relatedSnippets: task.relatedSnippets || []
+        relatedSnippets: task.relatedSnippets || [],
       });
     }
   }, [task]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.title.trim()) {
-      newErrors.title = 'Le titre est requis';
+      newErrors.title = "Le titre est requis";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -73,35 +89,39 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
 
   const handleAddTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()]
+        tags: [...prev.tags, newTag.trim()],
       }));
-      setNewTag('');
+      setNewTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAddTag();
     }
   };
 
   const formatDateForInput = (date: Date | undefined) => {
-    if (!date) return '';
-    return new Date(date).toISOString().split('T')[0];
+    if (!date) return "";
+    return new Date(date).toISOString().split("T")[0];
   };
 
   const handleDelete = () => {
-    if (task && onDelete && window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+    if (
+      task &&
+      onDelete &&
+      window.confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")
+    ) {
       onDelete(task.id);
     }
   };
@@ -111,7 +131,7 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
         <h2 className="text-lg font-semibold text-gray-900">
-          {task ? 'Modifier la tâche' : 'Nouvelle tâche'}
+          {task ? "Modifier la tâche" : "Nouvelle tâche"}
         </h2>
         <div className="flex items-center space-x-2">
           {task && onDelete && (
@@ -133,7 +153,10 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex-1 overflow-auto p-4 space-y-4 bg-white">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 overflow-auto p-4 space-y-4 bg-white"
+      >
         {/* Titre */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -142,9 +165,11 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
           <input
             type="text"
             value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, title: e.target.value }))
+            }
             className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 ${
-              errors.title ? 'border-red-500' : 'border-gray-300'
+              errors.title ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Titre de la tâche"
             autoFocus
@@ -161,7 +186,9 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
           </label>
           <textarea
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500"
             rows={3}
             placeholder="Description détaillée de la tâche"
@@ -176,10 +203,15 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
             </label>
             <select
               value={formData.type}
-              onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as TodoTask['type'] }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  type: e.target.value as TodoTask["type"],
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
             >
-              {TODO_TYPES.map(type => (
+              {TODO_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.icon} {type.label}
                 </option>
@@ -193,10 +225,15 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
             </label>
             <select
               value={formData.priority}
-              onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as TodoTask['priority'] }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  priority: e.target.value as TodoTask["priority"],
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
             >
-              {TODO_PRIORITIES.map(priority => (
+              {TODO_PRIORITIES.map((priority) => (
                 <option key={priority.value} value={priority.value}>
                   {priority.icon} {priority.label}
                 </option>
@@ -212,10 +249,15 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
           </label>
           <select
             value={formData.status}
-            onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as TodoTask['status'] }))}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                status: e.target.value as TodoTask["status"],
+              }))
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
           >
-            {TODO_STATUSES.map(status => (
+            {TODO_STATUSES.map((status) => (
               <option key={status.value} value={status.value}>
                 {status.icon} {status.label}
               </option>
@@ -231,11 +273,13 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
           </label>
           <select
             value={formData.project}
-            onChange={(e) => setFormData(prev => ({ ...prev, project: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, project: e.target.value }))
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
           >
             <option value="">Aucun projet</option>
-            {projects.map(project => (
+            {projects.map((project) => (
               <option key={project.id} value={project.id}>
                 {project.name}
               </option>
@@ -253,7 +297,9 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
             <input
               type="text"
               value={formData.assignee}
-              onChange={(e) => setFormData(prev => ({ ...prev, assignee: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, assignee: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500"
               placeholder="Nom de la personne"
             />
@@ -266,11 +312,15 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
             </label>
             <input
               type="number"
-              value={formData.estimatedTime || ''}
-              onChange={(e) => setFormData(prev => ({ 
-                ...prev, 
-                estimatedTime: e.target.value ? parseInt(e.target.value) : undefined 
-              }))}
+              value={formData.estimatedTime || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  estimatedTime: e.target.value
+                    ? parseInt(e.target.value)
+                    : undefined,
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
               min="0"
               step="0.5"
@@ -287,10 +337,12 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
           <input
             type="date"
             value={formatDateForInput(formData.dueDate)}
-            onChange={(e) => setFormData(prev => ({ 
-              ...prev, 
-              dueDate: e.target.value ? new Date(e.target.value) : undefined 
-            }))}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                dueDate: e.target.value ? new Date(e.target.value) : undefined,
+              }))
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
           />
         </div>
@@ -344,7 +396,7 @@ export default function TodoTaskForm({ task, projects, onSave, onCancel, onDelet
             className="flex-1 flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
           >
             <Save className="w-4 h-4 mr-2" />
-            {task ? 'Mettre à jour' : 'Créer'}
+            {task ? "Mettre à jour" : "Créer"}
           </button>
           <button
             type="button"

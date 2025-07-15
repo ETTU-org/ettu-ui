@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useDevAuth } from '../hooks/useDevAuth';
+import { type ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useDevAuth } from "../hooks/useDevAuth";
 
 interface DevLoginRouteProps {
   children: ReactNode;

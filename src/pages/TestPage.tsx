@@ -1,6 +1,6 @@
-import React from 'react';
-import Layout from '../layouts/Layout';
-import TestSecureStorage from '../components/TestSecureStorage';
+import React from "react";
+import Layout from "../layouts/Layout";
+import TestSecureStorage from "../components/TestSecureStorage";
 
 const TestPage: React.FC = () => {
   return (

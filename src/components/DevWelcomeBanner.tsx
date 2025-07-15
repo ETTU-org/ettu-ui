@@ -1,5 +1,5 @@
-import { useDevAuth } from '../hooks/useDevAuth';
-import { Link } from 'react-router-dom';
+import { useDevAuth } from "../hooks/useDevAuth";
+import { Link } from "react-router-dom";
 
 export default function DevWelcomeBanner() {
   const { isDevMode } = useDevAuth();
@@ -18,7 +18,8 @@ export default function DevWelcomeBanner() {
               Mode Développement Activé
             </h3>
             <p className="text-yellow-200 text-sm">
-              Vous êtes connecté sur le port {window.location.port} avec les outils de développement
+              Vous êtes connecté sur le port {window.location.port} avec les
+              outils de développement
             </p>
           </div>
         </div>
@@ -37,7 +38,7 @@ export default function DevWelcomeBanner() {
           </Link>
         </div>
       </div>
-      
+
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
         <div className="bg-yellow-800 bg-opacity-50 rounded p-3">
           <div className="font-medium text-yellow-100 mb-1">🔒 Sécurité</div>

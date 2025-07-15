@@ -2,38 +2,42 @@
  * Composant de gestion des projets pour les tâches TODO
  */
 
-import { useState } from 'react';
-import { Plus, Edit2, Trash2, FolderOpen, X, Save } from 'lucide-react';
-import type { TodoProject } from '../../types/todo';
+import { useState } from "react";
+import { Plus, Edit2, Trash2, FolderOpen, X, Save } from "lucide-react";
+import type { TodoProject } from "../../types/todo";
 
 interface TodoProjectManagerProps {
   projects: TodoProject[];
 }
 
-export default function TodoProjectManager({ projects }: TodoProjectManagerProps) {
+export default function TodoProjectManager({
+  projects,
+}: TodoProjectManagerProps) {
   const [showForm, setShowForm] = useState(false);
-  const [editingProject, setEditingProject] = useState<TodoProject | null>(null);
+  const [editingProject, setEditingProject] = useState<TodoProject | null>(
+    null
+  );
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    color: '#3B82F6'
+    name: "",
+    description: "",
+    color: "#3B82F6",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement project creation/editing
-    console.log('Project data:', formData);
+    console.log("Project data:", formData);
     setShowForm(false);
     setEditingProject(null);
-    setFormData({ name: '', description: '', color: '#3B82F6' });
+    setFormData({ name: "", description: "", color: "#3B82F6" });
   };
 
   const handleEdit = (project: TodoProject) => {
     setEditingProject(project);
     setFormData({
       name: project.name,
-      description: project.description || '',
-      color: project.color
+      description: project.description || "",
+      color: project.color,
     });
     setShowForm(true);
   };
@@ -41,17 +45,17 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
   const handleCancel = () => {
     setShowForm(false);
     setEditingProject(null);
-    setFormData({ name: '', description: '', color: '#3B82F6' });
+    setFormData({ name: "", description: "", color: "#3B82F6" });
   };
 
   const colorOptions = [
-    { value: '#3B82F6', label: 'Bleu', class: 'bg-blue-500' },
-    { value: '#10B981', label: 'Vert', class: 'bg-green-500' },
-    { value: '#F59E0B', label: 'Orange', class: 'bg-yellow-500' },
-    { value: '#EF4444', label: 'Rouge', class: 'bg-red-500' },
-    { value: '#8B5CF6', label: 'Violet', class: 'bg-purple-500' },
-    { value: '#EC4899', label: 'Rose', class: 'bg-pink-500' },
-    { value: '#6B7280', label: 'Gris', class: 'bg-gray-500' }
+    { value: "#3B82F6", label: "Bleu", class: "bg-blue-500" },
+    { value: "#10B981", label: "Vert", class: "bg-green-500" },
+    { value: "#F59E0B", label: "Orange", class: "bg-yellow-500" },
+    { value: "#EF4444", label: "Rouge", class: "bg-red-500" },
+    { value: "#8B5CF6", label: "Violet", class: "bg-purple-500" },
+    { value: "#EC4899", label: "Rose", class: "bg-pink-500" },
+    { value: "#6B7280", label: "Gris", class: "bg-gray-500" },
   ];
 
   return (
@@ -82,7 +86,9 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="Nom du projet"
                 required
@@ -96,7 +102,12 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500"
                 rows={2}
                 placeholder="Description du projet"
@@ -108,13 +119,17 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
                 Couleur
               </label>
               <div className="flex flex-wrap gap-2">
-                {colorOptions.map(color => (
+                {colorOptions.map((color) => (
                   <button
                     key={color.value}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, color: color.value }))}
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, color: color.value }))
+                    }
                     className={`w-8 h-8 rounded-full ${color.class} ${
-                      formData.color === color.value ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                      formData.color === color.value
+                        ? "ring-2 ring-offset-2 ring-blue-500"
+                        : ""
                     }`}
                     title={color.label}
                   />
@@ -128,7 +143,7 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
                 className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
               >
                 <Save className="w-4 h-4 mr-1" />
-                {editingProject ? 'Modifier' : 'Créer'}
+                {editingProject ? "Modifier" : "Créer"}
               </button>
               <button
                 type="button"
@@ -164,7 +179,7 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
           </div>
         ) : (
           <div className="space-y-3">
-            {projects.map(project => (
+            {projects.map((project) => (
               <div
                 key={project.id}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -175,9 +190,13 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
                     style={{ backgroundColor: project.color }}
                   />
                   <div>
-                    <h3 className="font-medium text-gray-900">{project.name}</h3>
+                    <h3 className="font-medium text-gray-900">
+                      {project.name}
+                    </h3>
                     {project.description && (
-                      <p className="text-sm text-gray-600">{project.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {project.description}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -191,7 +210,7 @@ export default function TodoProjectManager({ projects }: TodoProjectManagerProps
                   <button
                     onClick={() => {
                       // TODO: Implement project deletion
-                      console.log('Delete project:', project.id);
+                      console.log("Delete project:", project.id);
                     }}
                     className="p-1 text-gray-400 hover:text-red-600"
                   >

@@ -7,6 +7,7 @@ import { css } from "@codemirror/lang-css";
 import { json } from "@codemirror/lang-json";
 import { markdown } from "@codemirror/lang-markdown";
 import { secureLocalStorage } from "../../utils/secureLocalStorage";
+import type { ProjectSnippet } from "../../types/project";
 
 // Extensions de langages disponibles
 const languageExtensions = {
@@ -21,8 +22,15 @@ const languageExtensions = {
 };
 
 // Fonctions de validation simplifiées
-const validateContent = (content: string) => {
+const validateContent = (content: string | undefined) => {
   const errors: string[] = [];
+
+  if (!content) {
+    return {
+      isValid: true,
+      errors: [],
+    };
+  }
 
   if (content.length > 50000) {
     errors.push("Le contenu ne peut pas dépasser 50,000 caractères");
@@ -39,14 +47,14 @@ const validateContent = (content: string) => {
   };
 };
 
-const validateTitle = (title: string) => {
+const validateTitle = (title: string | undefined) => {
   const errors: string[] = [];
 
   if (!title || title.trim() === "") {
     errors.push("Le titre ne peut pas être vide");
   }
 
-  if (title.length > 100) {
+  if (title && title.length > 100) {
     errors.push("Le titre ne peut pas dépasser 100 caractères");
   }
 
@@ -65,18 +73,6 @@ interface ProjectSnippetEditorProps {
   projectId: string;
   projectName: string;
   onSnippetsCountChange?: (count: number) => void;
-}
-
-interface ProjectSnippet {
-  id: string;
-  projectId: string;
-  title: string;
-  description: string;
-  content: string;
-  language: string;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const LANGUAGES = [
@@ -190,9 +186,9 @@ export function ProjectSnippetEditor({
           if (projectSnippets.length > 0) {
             const firstSnippet = projectSnippets[0];
             setCurrentSnippetId(firstSnippet.id);
-            setContent(firstSnippet.content);
+            setContent(firstSnippet.code);
             setTitle(firstSnippet.title);
-            setDescription(firstSnippet.description);
+            setDescription(firstSnippet.description || "");
             setLanguage(firstSnippet.language);
             setTags(firstSnippet.tags);
           }
@@ -270,14 +266,14 @@ export function ProjectSnippetEditor({
 
   // Auto-sauvegarde (sans synchronisation automatique pour éviter les doublons)
   useEffect(() => {
-    if (!currentSnippetId || !content.trim() || !title.trim()) return;
+    if (!currentSnippetId || !content?.trim() || !title?.trim()) return;
 
     const timeoutId = setTimeout(() => {
       const updatedSnippets = snippets.map((snippet) =>
         snippet.id === currentSnippetId
           ? {
               ...snippet,
-              content,
+              code: content,
               title,
               description,
               language,
@@ -329,9 +325,9 @@ export function ProjectSnippetEditor({
       projectId,
       title: "Nouveau snippet",
       description: "",
-      content:
-        SNIPPET_TEMPLATES[language as keyof typeof SNIPPET_TEMPLATES] || "",
+      code: SNIPPET_TEMPLATES[language as keyof typeof SNIPPET_TEMPLATES] || "",
       language,
+      type: "utility",
       tags: [],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -344,9 +340,9 @@ export function ProjectSnippetEditor({
     // La page /snippets récupère directement les snippets via useProjects
 
     setCurrentSnippetId(newSnippet.id);
-    setContent(newSnippet.content);
+    setContent(newSnippet.code);
     setTitle(newSnippet.title);
-    setDescription(newSnippet.description);
+    setDescription(newSnippet.description || "");
     setLanguage(newSnippet.language);
     setTags(newSnippet.tags);
   };
@@ -368,9 +364,9 @@ export function ProjectSnippetEditor({
       if (updatedSnippets.length > 0) {
         const firstSnippet = updatedSnippets[0];
         setCurrentSnippetId(firstSnippet.id);
-        setContent(firstSnippet.content);
+        setContent(firstSnippet.code);
         setTitle(firstSnippet.title);
-        setDescription(firstSnippet.description);
+        setDescription(firstSnippet.description || "");
         setLanguage(firstSnippet.language);
         setTags(firstSnippet.tags);
       } else {
@@ -387,9 +383,9 @@ export function ProjectSnippetEditor({
   // Sélectionner un snippet
   const selectSnippet = (snippet: ProjectSnippet) => {
     setCurrentSnippetId(snippet.id);
-    setContent(snippet.content);
+    setContent(snippet.code);
     setTitle(snippet.title);
-    setDescription(snippet.description);
+    setDescription(snippet.description || "");
     setLanguage(snippet.language);
     setTags(snippet.tags);
   };
@@ -414,7 +410,7 @@ export function ProjectSnippetEditor({
 
   // Télécharger le snippet
   const downloadSnippet = () => {
-    if (!content.trim()) return;
+    if (!content?.trim()) return;
 
     const extension =
       language === "javascript"
@@ -456,6 +452,8 @@ export function ProjectSnippetEditor({
 
   // Copier le snippet dans le presse-papiers
   const copyToClipboard = async () => {
+    if (!content?.trim()) return;
+
     try {
       await navigator.clipboard.writeText(content);
       // Vous pouvez ajouter une notification ici
@@ -632,14 +630,14 @@ export function ProjectSnippetEditor({
             <button
               onClick={downloadSnippet}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
-              disabled={!content.trim()}
+              disabled={!content?.trim()}
             >
               💾 Télécharger
             </button>
             <button
               onClick={copyToClipboard}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors text-sm"
-              disabled={!content.trim()}
+              disabled={!content?.trim()}
             >
               📋 Copier
             </button>
@@ -664,8 +662,8 @@ export function ProjectSnippetEditor({
                 )}
               </div>
               <div className="flex items-center space-x-4 text-sm text-gray-400">
-                <span>{content.length} caractères</span>
-                <span>{content.split("\n").length} lignes</span>
+                <span>{content?.length || 0} caractères</span>
+                <span>{content?.split("\n").length || 0} lignes</span>
               </div>
             </div>
 
@@ -685,7 +683,7 @@ export function ProjectSnippetEditor({
 
             <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
               <CodeMirror
-                value={content}
+                value={content || ""}
                 height="100%"
                 extensions={[
                   languageExtensions[

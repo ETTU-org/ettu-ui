@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Layout from "../layouts/Layout";
 import type { Snippet } from "../types/snippet";
 import type { ProjectSnippet } from "../types/project";
@@ -13,7 +13,7 @@ const convertProjectSnippetToGlobalSnippet = (
     id: projectSnippet.id,
     title: projectSnippet.title,
     language: projectSnippet.language,
-    code: projectSnippet.code,
+    code: projectSnippet.code, // Les ProjectSnippet ont une propriété 'code' dans les types
     description: projectSnippet.description || "",
     tags: projectSnippet.tags || [],
     project: projectName,
@@ -24,11 +24,47 @@ const convertProjectSnippetToGlobalSnippet = (
 
 export default function SnippetsPage() {
   const { projects, snippets: projectSnippets } = useProjects();
+  const [globalSnippets, setGlobalSnippets] = useState<Snippet[]>([]);
   const [allSnippets, setAllSnippets] = useState<Snippet[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState<Snippet | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [newSnippetTitle, setNewSnippetTitle] = useState("");
+  const [newSnippetCode, setNewSnippetCode] = useState("");
+  const [newSnippetLanguage, setNewSnippetLanguage] = useState("javascript");
+  const [newSnippetDescription, setNewSnippetDescription] = useState("");
+
+  // Charger les snippets globaux au démarrage
+  useEffect(() => {
+    const loadGlobalSnippets = () => {
+      try {
+        const stored = localStorage.getItem("global-snippets");
+        if (stored) {
+          const parsed = JSON.parse(stored) as Snippet[];
+          setGlobalSnippets(parsed);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des snippets globaux:", error);
+      }
+    };
+
+    loadGlobalSnippets();
+  }, []);
+
+  // Sauvegarder les snippets globaux
+  const saveGlobalSnippets = useCallback((snippets: Snippet[]) => {
+    try {
+      localStorage.setItem("global-snippets", JSON.stringify(snippets));
+      setGlobalSnippets(snippets);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la sauvegarde des snippets globaux:",
+        error
+      );
+    }
+  }, []);
 
   // Récupérer tous les snippets des projets
   useEffect(() => {
@@ -44,8 +80,69 @@ export default function SnippetsPage() {
       }
     });
 
+    // Ajouter les snippets globaux
+    globalSnippets.forEach((snippet) => {
+      snippets.push(snippet);
+    });
+
     setAllSnippets(snippets);
-  }, [projectSnippets, projects]);
+  }, [projectSnippets, projects, globalSnippets]);
+
+  // Créer un nouveau snippet global
+  const createGlobalSnippet = () => {
+    if (!newSnippetTitle.trim() || !newSnippetCode.trim()) {
+      alert("Veuillez remplir au moins le titre et le code du snippet.");
+      return;
+    }
+
+    const newSnippet: Snippet = {
+      id: Date.now().toString(),
+      title: newSnippetTitle.trim(),
+      language: newSnippetLanguage,
+      code: newSnippetCode,
+      description: newSnippetDescription.trim(),
+      tags: [],
+      project: "", // Pas de projet = snippet global
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const updatedGlobalSnippets = [...globalSnippets, newSnippet];
+    saveGlobalSnippets(updatedGlobalSnippets);
+    setIsCreating(false);
+    setNewSnippetTitle("");
+    setNewSnippetCode("");
+    setNewSnippetDescription("");
+    setNewSnippetLanguage("javascript");
+  };
+
+  // Supprimer un snippet
+  const deleteSnippet = (snippet: Snippet) => {
+    if (snippet.project) {
+      alert(
+        "Vous ne pouvez pas supprimer un snippet lié à un projet depuis cette page."
+      );
+      return;
+    }
+
+    if (
+      !window.confirm(
+        `Êtes-vous sûr de vouloir supprimer le snippet "${snippet.title}" ?`
+      )
+    ) {
+      return;
+    }
+
+    // Supprimer le snippet global
+    const updatedGlobalSnippets = globalSnippets.filter(
+      (s) => s.id !== snippet.id
+    );
+    saveGlobalSnippets(updatedGlobalSnippets);
+
+    if (selectedSnippet?.id === snippet.id) {
+      setSelectedSnippet(null);
+    }
+  };
 
   // Filtrer les snippets
   const filteredSnippets = allSnippets.filter((snippet) => {
@@ -121,9 +218,82 @@ export default function SnippetsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Liste des snippets */}
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-4">
-              Snippets ({filteredSnippets.length})
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">
+                Snippets ({filteredSnippets.length})
+              </h2>
+              <button
+                onClick={() => setIsCreating(true)}
+                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
+              >
+                + Nouveau
+              </button>
+            </div>
+
+            {/* Formulaire de création */}
+            {isCreating && (
+              <div className="mb-4 p-4 border border-green-200 rounded-lg bg-green-50">
+                <h3 className="font-medium mb-2">Créer un nouveau snippet</h3>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Titre du snippet"
+                    value={newSnippetTitle}
+                    onChange={(e) => setNewSnippetTitle(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                  <select
+                    value={newSnippetLanguage}
+                    onChange={(e) => setNewSnippetLanguage(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  >
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="python">Python</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="json">JSON</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="text">Texte</option>
+                  </select>
+                  <textarea
+                    placeholder="Description (optionnelle)"
+                    value={newSnippetDescription}
+                    onChange={(e) => setNewSnippetDescription(e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                  <textarea
+                    placeholder="Code du snippet"
+                    value={newSnippetCode}
+                    onChange={(e) => setNewSnippetCode(e.target.value)}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={createGlobalSnippet}
+                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Créer
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsCreating(false);
+                        setNewSnippetTitle("");
+                        setNewSnippetCode("");
+                        setNewSnippetDescription("");
+                        setNewSnippetLanguage("javascript");
+                      }}
+                      className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {filteredSnippets.map((snippet) => (
                 <div
@@ -139,16 +309,30 @@ export default function SnippetsPage() {
                     <h3 className="font-semibold text-gray-900">
                       {snippet.title}
                     </h3>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                      {snippet.language}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        {snippet.language}
+                      </span>
+                      {!snippet.project && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteSnippet(snippet);
+                          }}
+                          className="text-red-500 hover:text-red-700 text-xs"
+                          title="Supprimer ce snippet"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">
                     {snippet.description}
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-blue-600">
-                      {snippet.project}
+                      {snippet.project || "Snippet global"}
                     </span>
                     <div className="flex gap-1">
                       {snippet.tags.map((tag) => (

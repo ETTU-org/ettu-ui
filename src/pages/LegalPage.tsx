@@ -1,33 +1,36 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FileText, Shield, Scale, ArrowRight } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { FileText, Shield, Scale, ArrowRight } from "lucide-react";
 
 const LegalPage: React.FC = () => {
   const legalDocuments = [
     {
       title: "Conditions Générales d'Utilisation",
-      description: "Les règles et conditions d'utilisation de l'application ETTU",
+      description:
+        "Les règles et conditions d'utilisation de l'application ETTU",
       icon: FileText,
       link: "/cgu",
       color: "bg-blue-500",
-      colorHover: "hover:bg-blue-600"
+      colorHover: "hover:bg-blue-600",
     },
     {
       title: "Politique de Confidentialité",
-      description: "Comment nous collectons, utilisons et protégeons vos données personnelles",
+      description:
+        "Comment nous collectons, utilisons et protégeons vos données personnelles",
       icon: Shield,
       link: "/privacy-policy",
       color: "bg-green-500",
-      colorHover: "hover:bg-green-600"
+      colorHover: "hover:bg-green-600",
     },
     {
       title: "Mentions Légales",
-      description: "Informations légales sur l'éditeur et l'hébergement de l'application",
+      description:
+        "Informations légales sur l'éditeur et l'hébergement de l'application",
       icon: Scale,
       link: "/legal-notice",
       color: "bg-purple-500",
-      colorHover: "hover:bg-purple-600"
-    }
+      colorHover: "hover:bg-purple-600",
+    },
   ];
 
   return (
@@ -38,8 +41,9 @@ const LegalPage: React.FC = () => {
             Documents Légaux
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Retrouvez ici tous les documents légaux concernant l'utilisation de l'application ETTU.
-            Ces documents sont conformes à la réglementation RGPD et au droit français.
+            Retrouvez ici tous les documents légaux concernant l'utilisation de
+            l'application ETTU. Ces documents sont conformes à la réglementation
+            RGPD et au droit français.
           </p>
         </div>
 
@@ -54,7 +58,9 @@ const LegalPage: React.FC = () => {
               >
                 <div className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className={`${document.color} ${document.colorHover} p-3 rounded-lg transition-colors duration-200`}>
+                    <div
+                      className={`${document.color} ${document.colorHover} p-3 rounded-lg transition-colors duration-200`}
+                    >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ml-auto" />
@@ -77,20 +83,32 @@ const LegalPage: React.FC = () => {
               À propos de la conformité RGPD
             </h2>
             <p className="text-gray-600 mb-6">
-              L'application ETTU est conçue dans le respect du Règlement Général sur la Protection des Données (RGPD).
-              Vos données sont stockées localement sur votre appareil et ne sont jamais transmises à des serveurs externes.
+              L'application ETTU est conçue dans le respect du Règlement Général
+              sur la Protection des Données (RGPD). Vos données sont stockées
+              localement sur votre appareil et ne sont jamais transmises à des
+              serveurs externes.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
               <div className="bg-green-50 p-4 rounded-lg">
-                <div className="text-green-600 font-medium mb-2">🔒 Sécurité</div>
-                <p className="text-gray-700">Stockage local sécurisé dans votre navigateur</p>
+                <div className="text-green-600 font-medium mb-2">
+                  🔒 Sécurité
+                </div>
+                <p className="text-gray-700">
+                  Stockage local sécurisé dans votre navigateur
+                </p>
               </div>
               <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="text-blue-600 font-medium mb-2">🛡️ Confidentialité</div>
-                <p className="text-gray-700">Aucune collecte de données personnelles</p>
+                <div className="text-blue-600 font-medium mb-2">
+                  🛡️ Confidentialité
+                </div>
+                <p className="text-gray-700">
+                  Aucune collecte de données personnelles
+                </p>
               </div>
               <div className="bg-purple-50 p-4 rounded-lg">
-                <div className="text-purple-600 font-medium mb-2">⚖️ Conformité</div>
+                <div className="text-purple-600 font-medium mb-2">
+                  ⚖️ Conformité
+                </div>
                 <p className="text-gray-700">Respect total du RGPD</p>
               </div>
             </div>

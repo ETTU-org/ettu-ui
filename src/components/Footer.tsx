@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -7,31 +7,32 @@ export default function Footer() {
         <div className="flex flex-col space-y-4">
           {/* Liens légaux */}
           <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-            <Link 
-              to="/cgu" 
+            <Link
+              to="/cgu"
               className="hover:text-white transition-colors duration-200"
             >
               Conditions Générales d'Utilisation
             </Link>
-            <Link 
-              to="/privacy-policy" 
+            <Link
+              to="/privacy-policy"
               className="hover:text-white transition-colors duration-200"
             >
               Politique de Confidentialité
             </Link>
-            <Link 
-              to="/legal-notice" 
+            <Link
+              to="/legal-notice"
               className="hover:text-white transition-colors duration-200"
             >
               Mentions Légales
             </Link>
           </div>
-          
+
           {/* Séparateur */}
           <div className="border-t border-gray-700 pt-4">
             <p className="flex flex-col sm:flex-row items-center justify-center gap-2">
               <span>
-                © {new Date().getFullYear()} ETTU – Outil d'organisation pour développeurs.
+                © {new Date().getFullYear()} ETTU – Outil d'organisation pour
+                développeurs.
               </span>
               <span className="hidden sm:inline">•</span>
               <a

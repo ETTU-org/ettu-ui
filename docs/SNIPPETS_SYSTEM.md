@@ -34,9 +34,11 @@ src/
 ### Composants principaux
 
 #### 1. SnippetsPage (Container)
+
 **Responsabilité** : Orchestration générale et gestion d'état
 
 **État géré** :
+
 - `snippets`: Liste complète des snippets
 - `selectedSnippet`: Snippet actuellement sélectionné
 - `editingSnippet`: Snippet en cours d'édition
@@ -45,27 +47,33 @@ src/
 - `projectFilter`: Filtre par projet
 
 #### 2. SnippetList (Présentation)
+
 **Responsabilité** : Affichage et interactions avec la liste
 
 **Fonctionnalités** :
+
 - Affichage liste/détail adaptatif
 - Actions rapides (copier, éditer, supprimer)
 - Badges colorés par langage
 - Gestion responsive
 
 #### 3. SnippetEditor (Présentation)
+
 **Responsabilité** : Création et édition de snippets
 
 **Fonctionnalités** :
+
 - Formulaire complet avec validation
 - Éditeur CodeMirror avec coloration syntaxique
 - Sélection de langage par catégories
 - Gestion des tags et métadonnées
 
 #### 4. SnippetPreview (Présentation)
+
 **Responsabilité** : Prévisualisation et actions sur les snippets
 
 **Fonctionnalités** :
+
 - Affichage formaté du code
 - Actions rapides (copier, éditer)
 - Métadonnées enrichies
@@ -74,35 +82,41 @@ src/
 ## 🚀 Utilisation
 
 ### Installation des dépendances
+
 ```bash
 npm install @codemirror/lang-javascript @codemirror/lang-python @codemirror/lang-html @codemirror/lang-css @codemirror/lang-json @codemirror/lang-markdown
 ```
 
 ### Intégration de base
+
 ```typescript
 // Dans SnippetsPage.tsx
 import { useSecureStorage } from "../hooks/useSecureStorage";
-import { SnippetList, SnippetEditor, SnippetPreview } from "../features/snippets";
+import {
+  SnippetList,
+  SnippetEditor,
+  SnippetPreview,
+} from "../features/snippets";
 
 const SnippetsPage = () => {
   const {
     data: snippets,
     setData: setSnippets,
     loading,
-    error
-  } = useSecureStorage<Snippet[]>('user-snippets', []);
+    error,
+  } = useSecureStorage<Snippet[]>("user-snippets", []);
 
   return (
     <ResponsiveLayout
       editorContent={
         <div className="h-full flex flex-col">
-          <SnippetList 
+          <SnippetList
             snippets={filteredSnippets}
             onSelect={setSelectedSnippet}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-          <SnippetEditor 
+          <SnippetEditor
             snippet={editingSnippet}
             onSave={handleSave}
             onCancel={handleCancel}
@@ -110,7 +124,7 @@ const SnippetsPage = () => {
         </div>
       }
       previewContent={
-        <SnippetPreview 
+        <SnippetPreview
           snippet={selectedSnippet}
           onEdit={handleEdit}
           onCopy={handleCopy}
@@ -124,6 +138,7 @@ const SnippetsPage = () => {
 ## 📝 Types TypeScript
 
 ### Interface Snippet
+
 ```typescript
 export interface Snippet {
   id: string;
@@ -140,68 +155,145 @@ export interface Snippet {
 ```
 
 ### Langages supportés
+
 ```typescript
-export type SupportedLanguage = 
-  | 'javascript' | 'typescript' | 'python' | 'java' | 'cpp' | 'c'
-  | 'html' | 'css' | 'scss' | 'json' | 'xml' | 'yaml'
-  | 'markdown' | 'latex' | 'plaintext'
-  | 'bash' | 'powershell' | 'dockerfile' | 'sql'
-  | 'react' | 'vue' | 'angular' | 'svelte'
-  | 'nodejs' | 'php' | 'ruby' | 'go' | 'rust'
-  | 'swift' | 'kotlin' | 'dart' | 'scala'
-  | 'r' | 'matlab' | 'perl' | 'lua'
-  | 'assembly' | 'verilog' | 'vhdl'
-  | 'graphql' | 'protobuf' | 'terraform'
-  | 'nginx' | 'apache' | 'regex';
+export type SupportedLanguage =
+  | "javascript"
+  | "typescript"
+  | "python"
+  | "java"
+  | "cpp"
+  | "c"
+  | "html"
+  | "css"
+  | "scss"
+  | "json"
+  | "xml"
+  | "yaml"
+  | "markdown"
+  | "latex"
+  | "plaintext"
+  | "bash"
+  | "powershell"
+  | "dockerfile"
+  | "sql"
+  | "react"
+  | "vue"
+  | "angular"
+  | "svelte"
+  | "nodejs"
+  | "php"
+  | "ruby"
+  | "go"
+  | "rust"
+  | "swift"
+  | "kotlin"
+  | "dart"
+  | "scala"
+  | "r"
+  | "matlab"
+  | "perl"
+  | "lua"
+  | "assembly"
+  | "verilog"
+  | "vhdl"
+  | "graphql"
+  | "protobuf"
+  | "terraform"
+  | "nginx"
+  | "apache"
+  | "regex";
 ```
 
 ### Catégories de langages
+
 ```typescript
 export const LANGUAGE_CATEGORIES = {
-  'Web Frontend': ['javascript', 'typescript', 'html', 'css', 'scss', 'react', 'vue', 'angular', 'svelte'],
-  'Backend': ['nodejs', 'python', 'java', 'php', 'ruby', 'go', 'rust', 'cpp', 'c'],
-  'Mobile': ['swift', 'kotlin', 'dart', 'java'],
-  'Data & Config': ['json', 'xml', 'yaml', 'sql', 'graphql', 'protobuf'],
-  'DevOps': ['bash', 'powershell', 'dockerfile', 'terraform', 'nginx', 'apache'],
-  'Other': ['markdown', 'latex', 'plaintext', 'r', 'matlab', 'perl', 'lua', 'assembly', 'verilog', 'vhdl', 'regex']
+  "Web Frontend": [
+    "javascript",
+    "typescript",
+    "html",
+    "css",
+    "scss",
+    "react",
+    "vue",
+    "angular",
+    "svelte",
+  ],
+  Backend: [
+    "nodejs",
+    "python",
+    "java",
+    "php",
+    "ruby",
+    "go",
+    "rust",
+    "cpp",
+    "c",
+  ],
+  Mobile: ["swift", "kotlin", "dart", "java"],
+  "Data & Config": ["json", "xml", "yaml", "sql", "graphql", "protobuf"],
+  DevOps: ["bash", "powershell", "dockerfile", "terraform", "nginx", "apache"],
+  Other: [
+    "markdown",
+    "latex",
+    "plaintext",
+    "r",
+    "matlab",
+    "perl",
+    "lua",
+    "assembly",
+    "verilog",
+    "vhdl",
+    "regex",
+  ],
 };
 ```
 
 ## 🎨 Fonctionnalités
 
 ### Création de snippets
+
 ```typescript
-const createSnippet = (snippetData: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>) => {
+const createSnippet = (
+  snippetData: Omit<Snippet, "id" | "createdAt" | "updatedAt">
+) => {
   const newSnippet: Snippet = {
     ...snippetData,
     id: crypto.randomUUID(),
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
-  
-  setSnippets(prev => [...prev, newSnippet]);
+
+  setSnippets((prev) => [...prev, newSnippet]);
 };
 ```
 
 ### Filtrage et recherche
+
 ```typescript
 const filteredSnippets = useMemo(() => {
-  return snippets.filter(snippet => {
-    const matchesSearch = !searchTerm || 
+  return snippets.filter((snippet) => {
+    const matchesSearch =
+      !searchTerm ||
       snippet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       snippet.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       snippet.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      snippet.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesLanguage = !languageFilter || snippet.language === languageFilter;
+      snippet.tags.some((tag) =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+    const matchesLanguage =
+      !languageFilter || snippet.language === languageFilter;
     const matchesProject = !projectFilter || snippet.project === projectFilter;
-    
+
     return matchesSearch && matchesLanguage && matchesProject;
   });
 }, [snippets, searchTerm, languageFilter, projectFilter]);
 ```
 
 ### Coloration syntaxique
+
 ```typescript
 const getLanguageExtension = (language: SupportedLanguage) => {
   const extensions = {
@@ -214,31 +306,33 @@ const getLanguageExtension = (language: SupportedLanguage) => {
     markdown: [markdown()],
     // ... autres langages
   };
-  
+
   return extensions[language] || [];
 };
 ```
 
 ### Badges colorés
+
 ```typescript
 const getLanguageBadgeColor = (language: SupportedLanguage): string => {
   const colors = {
-    javascript: 'bg-yellow-600',
-    typescript: 'bg-blue-600',
-    python: 'bg-green-600',
-    html: 'bg-orange-600',
-    css: 'bg-purple-600',
-    react: 'bg-cyan-600',
+    javascript: "bg-yellow-600",
+    typescript: "bg-blue-600",
+    python: "bg-green-600",
+    html: "bg-orange-600",
+    css: "bg-purple-600",
+    react: "bg-cyan-600",
     // ... autres couleurs
   };
-  
-  return colors[language] || 'bg-gray-600';
+
+  return colors[language] || "bg-gray-600";
 };
 ```
 
 ## 📱 Interface Responsive
 
 ### Layout adaptatif
+
 ```typescript
 // Mobile : Vue par onglets
 <ResponsiveLayout
@@ -253,15 +347,16 @@ const getLanguageBadgeColor = (language: SupportedLanguage): string => {
     editorLabel: "Snippets",
     previewLabel: "Aperçu",
     editorIcon: "📝",
-    previewIcon: "🔍"
+    previewIcon: "🔍",
   }}
 />
 ```
 
 ### Optimisations mobiles
+
 ```typescript
 // Taille d'éditeur adaptative
-const editorHeight = isMobile ? '200px' : '400px';
+const editorHeight = isMobile ? "200px" : "400px";
 
 // Pagination pour mobile
 const ITEMS_PER_PAGE = isMobile ? 10 : 20;
@@ -270,6 +365,7 @@ const ITEMS_PER_PAGE = isMobile ? 10 : 20;
 ## 💾 Stockage et Persistance
 
 ### Intégration secureStorage
+
 ```typescript
 import { useSecureStorage } from "../hooks/useSecureStorage";
 
@@ -277,36 +373,38 @@ const {
   data: snippets,
   setData: setSnippets,
   loading,
-  error
-} = useSecureStorage<Snippet[]>('user-snippets', []);
+  error,
+} = useSecureStorage<Snippet[]>("user-snippets", []);
 ```
 
 ### Sauvegarde automatique
+
 ```typescript
 // Auto-sauvegarde après modification
 useEffect(() => {
   if (snippets.length > 0) {
     const saveTimer = setTimeout(() => {
-      secureStorage.setItem('snippets-backup', JSON.stringify(snippets));
+      secureStorage.setItem("snippets-backup", JSON.stringify(snippets));
     }, 5000);
-    
+
     return () => clearTimeout(saveTimer);
   }
 }, [snippets]);
 ```
 
 ### Migration des données
+
 ```typescript
 // Migration depuis localStorage vers secureStorage
 const migrateSnippets = () => {
-  const oldSnippets = localStorage.getItem('snippets');
+  const oldSnippets = localStorage.getItem("snippets");
   if (oldSnippets) {
     try {
       const parsed = JSON.parse(oldSnippets);
       setSnippets(parsed);
-      localStorage.removeItem('snippets');
+      localStorage.removeItem("snippets");
     } catch (error) {
-      console.error('Erreur migration snippets:', error);
+      console.error("Erreur migration snippets:", error);
     }
   }
 };
@@ -315,59 +413,63 @@ const migrateSnippets = () => {
 ## 🧪 Tests
 
 ### Tests unitaires
+
 ```typescript
 // Dans snippets.test.ts
-describe('Snippets System', () => {
-  test('création de snippet', () => {
+describe("Snippets System", () => {
+  test("création de snippet", () => {
     const snippet = createSnippet({
-      title: 'Test',
-      description: 'Description',
+      title: "Test",
+      description: "Description",
       code: 'console.log("test")',
-      language: 'javascript',
-      tags: ['test'],
-      isFavorite: false
+      language: "javascript",
+      tags: ["test"],
+      isFavorite: false,
     });
-    
+
     expect(snippet.id).toBeDefined();
     expect(snippet.createdAt).toBeInstanceOf(Date);
   });
-  
-  test('filtrage par langage', () => {
-    const filtered = filterSnippets(snippets, '', 'javascript', '');
-    expect(filtered.every(s => s.language === 'javascript')).toBe(true);
+
+  test("filtrage par langage", () => {
+    const filtered = filterSnippets(snippets, "", "javascript", "");
+    expect(filtered.every((s) => s.language === "javascript")).toBe(true);
   });
 });
 ```
 
 ### Tests d'intégration
+
 ```typescript
 // Test interface utilisateur
-test('ajout de snippet via interface', async () => {
+test("ajout de snippet via interface", async () => {
   const { getByText, getByLabelText } = render(<SnippetsPage />);
-  
-  fireEvent.click(getByText('Nouveau snippet'));
-  fireEvent.change(getByLabelText('Titre'), { target: { value: 'Test' } });
-  fireEvent.click(getByText('Sauvegarder'));
-  
-  expect(getByText('Test')).toBeInTheDocument();
+
+  fireEvent.click(getByText("Nouveau snippet"));
+  fireEvent.change(getByLabelText("Titre"), { target: { value: "Test" } });
+  fireEvent.click(getByText("Sauvegarder"));
+
+  expect(getByText("Test")).toBeInTheDocument();
 });
 ```
 
 ## 🚀 Déploiement
 
 ### Configuration de production
+
 ```typescript
 // Optimisations pour production
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 const snippetConfig = {
   maxSnippets: isProduction ? 1000 : 100,
   maxCodeLength: isProduction ? 10000 : 5000,
-  enableAnalytics: isProduction
+  enableAnalytics: isProduction,
 };
 ```
 
 ### Lazy loading
+
 ```typescript
 // Chargement à la demande des extensions CodeMirror
 const loadLanguageExtension = async (language: SupportedLanguage) => {
@@ -379,21 +481,23 @@ const loadLanguageExtension = async (language: SupportedLanguage) => {
 ## 📊 Monitoring
 
 ### Métriques d'utilisation
+
 ```typescript
 const trackSnippetUsage = (action: string, language: SupportedLanguage) => {
   const event = {
     action,
     language,
     timestamp: Date.now(),
-    sessionId: sessionStorage.getItem('session-id')
+    sessionId: sessionStorage.getItem("session-id"),
   };
-  
+
   // Envoi vers analytics
-  console.log('📊 Snippet usage:', event);
+  console.log("📊 Snippet usage:", event);
 };
 ```
 
 ### Performance
+
 ```typescript
 // Monitoring des performances
 const performanceTimer = performance.now();
@@ -408,15 +512,16 @@ if (duration > 100) {
 ## 🔧 Extensibilité
 
 ### Ajout de nouveaux langages
+
 ```typescript
 // 1. Ajouter dans les types
-export type SupportedLanguage = 'existing' | 'newlang';
+export type SupportedLanguage = "existing" | "newlang";
 
 // 2. Ajouter l'extension CodeMirror
 const getLanguageExtension = (language: SupportedLanguage) => {
   const extensions = {
     // ... existing
-    newlang: [newlangExtension()]
+    newlang: [newlangExtension()],
   };
   return extensions[language] || [];
 };
@@ -425,13 +530,14 @@ const getLanguageExtension = (language: SupportedLanguage) => {
 const getLanguageBadgeColor = (language: SupportedLanguage): string => {
   const colors = {
     // ... existing
-    newlang: 'bg-indigo-600'
+    newlang: "bg-indigo-600",
   };
-  return colors[language] || 'bg-gray-600';
+  return colors[language] || "bg-gray-600";
 };
 ```
 
 ### Plugins personnalisés
+
 ```typescript
 // Interface pour plugins
 interface SnippetPlugin {
@@ -462,5 +568,5 @@ const applyPlugins = (action: string, snippet: Snippet) => {
 
 ---
 
-*Documentation mise à jour le 14 juillet 2025*  
-*Prochaine révision : Avant déploiement production*
+_Documentation mise à jour le 14 juillet 2025_  
+_Prochaine révision : Avant déploiement production_

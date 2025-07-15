@@ -28,33 +28,6 @@ export function useSecureStorage<T = string>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fonction pour récupérer la valeur
-  const getValue = useCallback(() => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const item = secureStorage.getItem(key, options);
-      if (item !== null) {
-        // Essayer de parser JSON si la valeur initiale est un objet
-        if (typeof initialValue === 'object' && initialValue !== null) {
-          try {
-            return JSON.parse(item);
-          } catch {
-            return item;
-          }
-        }
-        return item as T;
-      }
-      return initialValue || null;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur de lecture');
-      return initialValue || null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [key, initialValue, options]);
-
   // Fonction pour définir la valeur
   const setValue = useCallback((value: T | null) => {
     try {
@@ -95,11 +68,47 @@ export function useSecureStorage<T = string>(
     }
   }, [key]);
 
-  // Charger la valeur initiale
+  // Charger la valeur initiale une seule fois
   useEffect(() => {
-    const value = getValue();
-    setStoredValue(value);
-  }, [getValue]);
+    let mounted = true;
+    
+    const loadValue = () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const item = secureStorage.getItem(key, options);
+        if (item !== null) {
+          // Essayer de parser JSON si la valeur initiale est un objet
+          if (typeof initialValue === 'object' && initialValue !== null) {
+            try {
+              const parsed = JSON.parse(item);
+              if (mounted) setStoredValue(parsed);
+            } catch {
+              if (mounted) setStoredValue(item as T);
+            }
+          } else {
+            if (mounted) setStoredValue(item as T);
+          }
+        } else {
+          if (mounted) setStoredValue(initialValue || null);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : 'Erreur de lecture');
+          setStoredValue(initialValue || null);
+        }
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    loadValue();
+
+    return () => {
+      mounted = false;
+    };
+  }, [key]); // Seulement key comme dépendance
 
   return [storedValue, setValue, removeValue, isLoading, error];
 }

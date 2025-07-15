@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { type Toast } from '../hooks/useToast';
+import { useEffect } from "react";
+import { type Toast } from "../hooks/useToast";
 
 interface ToastNotificationProps {
   toast: Toast;
@@ -17,34 +17,36 @@ function ToastNotification({ toast, onClose }: ToastNotificationProps) {
 
   const getToastStyles = () => {
     switch (toast.type) {
-      case 'success':
-        return 'bg-green-600 border-green-500 text-green-100';
-      case 'error':
-        return 'bg-red-600 border-red-500 text-red-100';
-      case 'warning':
-        return 'bg-yellow-600 border-yellow-500 text-yellow-100';
-      case 'info':
+      case "success":
+        return "bg-green-600 border-green-500 text-green-100";
+      case "error":
+        return "bg-red-600 border-red-500 text-red-100";
+      case "warning":
+        return "bg-yellow-600 border-yellow-500 text-yellow-100";
+      case "info":
       default:
-        return 'bg-blue-600 border-blue-500 text-blue-100';
+        return "bg-blue-600 border-blue-500 text-blue-100";
     }
   };
 
   const getIcon = () => {
     switch (toast.type) {
-      case 'success':
-        return '✅';
-      case 'error':
-        return '❌';
-      case 'warning':
-        return '⚠️';
-      case 'info':
+      case "success":
+        return "✅";
+      case "error":
+        return "❌";
+      case "warning":
+        return "⚠️";
+      case "info":
       default:
-        return 'ℹ️';
+        return "ℹ️";
     }
   };
 
   return (
-    <div className={`${getToastStyles()} border rounded-lg p-4 shadow-lg min-w-96 animate-slide-in`}>
+    <div
+      className={`${getToastStyles()} border rounded-lg p-4 shadow-lg min-w-96 animate-slide-in`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <span className="text-lg">{getIcon()}</span>
@@ -66,15 +68,14 @@ interface ToastContainerProps {
   onClose: (id: string) => void;
 }
 
-export default function ToastContainer({ toasts, onClose }: ToastContainerProps) {
+export default function ToastContainer({
+  toasts,
+  onClose,
+}: ToastContainerProps) {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {toasts.map((toast) => (
-        <ToastNotification
-          key={toast.id}
-          toast={toast}
-          onClose={onClose}
-        />
+        <ToastNotification key={toast.id} toast={toast} onClose={onClose} />
       ))}
     </div>
   );

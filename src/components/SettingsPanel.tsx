@@ -1,25 +1,28 @@
 /**
  * Composant de paramètres utilisateur avec stockage sécurisé
- * 
+ *
  * @file SettingsPanel.tsx
  * @author BOSSIS--GUYON Jules
  * @date 2025-07-14
  */
 
-import React, { useState } from 'react';
-import { Settings, Download, Upload, RotateCcw, Save, X } from 'lucide-react';
-import { useUserPreferences, type UserPreferences } from '../hooks/useUserPreferences';
+import React, { useState } from "react";
+import { Settings, Download, Upload, RotateCcw, Save, X } from "lucide-react";
+import {
+  useUserPreferences,
+  type UserPreferences,
+} from "../hooks/useUserPreferences";
 
 interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type TabType = 'general' | 'editor' | 'security';
+type TabType = "general" | "editor" | "security";
 
 /**
  * Composant de panneau de paramètres
- * 
+ *
  * Permet de configurer toutes les préférences utilisateur de manière sécurisée
  */
 export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
@@ -31,7 +34,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
     importPreferences,
   } = useUserPreferences();
 
-  const [activeTab, setActiveTab] = useState<TabType>('general');
+  const [activeTab, setActiveTab] = useState<TabType>("general");
   const [isImporting, setIsImporting] = useState(false);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,19 +46,21 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
     setIsImporting(false);
 
     if (success) {
-      alert('Préférences importées avec succès !');
+      alert("Préférences importées avec succès !");
     } else {
-      alert('Erreur lors de l\'importation des préférences.');
+      alert("Erreur lors de l'importation des préférences.");
     }
 
     // Reset input
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const handleReset = () => {
-    if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les préférences ?')) {
+    if (
+      confirm("Êtes-vous sûr de vouloir réinitialiser toutes les préférences ?")
+    ) {
       resetPreferences();
-      alert('Préférences réinitialisées avec succès !');
+      alert("Préférences réinitialisées avec succès !");
     }
   };
 
@@ -81,17 +86,17 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
           {[
-            { id: 'general' as const, label: 'Général' },
-            { id: 'editor' as const, label: 'Éditeur' },
-            { id: 'security' as const, label: 'Sécurité' },
-          ].map(tab => (
+            { id: "general" as const, label: "Général" },
+            { id: "editor" as const, label: "Éditeur" },
+            { id: "security" as const, label: "Sécurité" },
+          ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
               {tab.label}
@@ -102,10 +107,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
         {/* Content */}
         <div className="space-y-6">
           {/* Onglet Général */}
-          {activeTab === 'general' && (
+          {activeTab === "general" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-4">Paramètres généraux</h3>
-              
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Paramètres généraux
+              </h3>
+
               {/* Thème */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">
@@ -113,7 +120,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 </label>
                 <select
                   value={preferences.theme}
-                  onChange={(e) => updatePreference('theme', e.target.value as UserPreferences['theme'])}
+                  onChange={(e) =>
+                    updatePreference(
+                      "theme",
+                      e.target.value as UserPreferences["theme"]
+                    )
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="light">Clair</option>
@@ -129,7 +141,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 </label>
                 <select
                   value={preferences.language}
-                  onChange={(e) => updatePreference('language', e.target.value as UserPreferences['language'])}
+                  onChange={(e) =>
+                    updatePreference(
+                      "language",
+                      e.target.value as UserPreferences["language"]
+                    )
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="fr">Français</option>
@@ -144,7 +161,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 </label>
                 <select
                   value={preferences.fontSize}
-                  onChange={(e) => updatePreference('fontSize', e.target.value as UserPreferences['fontSize'])}
+                  onChange={(e) =>
+                    updatePreference(
+                      "fontSize",
+                      e.target.value as UserPreferences["fontSize"]
+                    )
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="small">Petite</option>
@@ -159,7 +181,9 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   <input
                     type="checkbox"
                     checked={preferences.notifications}
-                    onChange={(e) => updatePreference('notifications', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("notifications", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Notifications</span>
@@ -169,7 +193,9 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   <input
                     type="checkbox"
                     checked={preferences.soundEnabled}
-                    onChange={(e) => updatePreference('soundEnabled', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("soundEnabled", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Sons</span>
@@ -179,7 +205,9 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   <input
                     type="checkbox"
                     checked={preferences.compactMode}
-                    onChange={(e) => updatePreference('compactMode', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("compactMode", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Mode compact</span>
@@ -189,7 +217,9 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   <input
                     type="checkbox"
                     checked={preferences.developerMode}
-                    onChange={(e) => updatePreference('developerMode', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("developerMode", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Mode développeur</span>
@@ -199,17 +229,21 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
           )}
 
           {/* Onglet Éditeur */}
-          {activeTab === 'editor' && (
+          {activeTab === "editor" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-4">Paramètres d'éditeur</h3>
-              
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Paramètres d'éditeur
+              </h3>
+
               {/* Auto-sauvegarde */}
               <div className="space-y-3">
                 <label className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     checked={preferences.autoSave}
-                    onChange={(e) => updatePreference('autoSave', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("autoSave", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Auto-sauvegarde</span>
@@ -225,7 +259,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                       min="1"
                       max="60"
                       value={preferences.autoSaveInterval}
-                      onChange={(e) => updatePreference('autoSaveInterval', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updatePreference(
+                          "autoSaveInterval",
+                          parseInt(e.target.value)
+                        )
+                      }
                       className="w-20 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -238,17 +277,23 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   <input
                     type="checkbox"
                     checked={preferences.editorWordWrap}
-                    onChange={(e) => updatePreference('editorWordWrap', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("editorWordWrap", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
-                  <span className="text-gray-300">Retour à la ligne automatique</span>
+                  <span className="text-gray-300">
+                    Retour à la ligne automatique
+                  </span>
                 </label>
 
                 <label className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     checked={preferences.showLineNumbers}
-                    onChange={(e) => updatePreference('showLineNumbers', e.target.checked)}
+                    onChange={(e) =>
+                      updatePreference("showLineNumbers", e.target.checked)
+                    }
                     className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
                   />
                   <span className="text-gray-300">Numéros de ligne</span>
@@ -262,7 +307,9 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                 </label>
                 <select
                   value={preferences.tabSize}
-                  onChange={(e) => updatePreference('tabSize', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    updatePreference("tabSize", parseInt(e.target.value))
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={2}>2 espaces</option>
@@ -274,15 +321,20 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
           )}
 
           {/* Onglet Sécurité */}
-          {activeTab === 'security' && (
+          {activeTab === "security" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-4">Sécurité et données</h3>
-              
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Sécurité et données
+              </h3>
+
               <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="font-medium text-white mb-2">Stockage sécurisé</h4>
+                <h4 className="font-medium text-white mb-2">
+                  Stockage sécurisé
+                </h4>
                 <p className="text-sm text-gray-400 mb-3">
-                  Vos données sont chiffrées avec AES-256 et stockées localement dans votre navigateur.
-                  Aucune information n'est transmise à des serveurs externes.
+                  Vos données sont chiffrées avec AES-256 et stockées localement
+                  dans votre navigateur. Aucune information n'est transmise à
+                  des serveurs externes.
                 </p>
                 <div className="text-xs text-gray-500">
                   <p>• Chiffrement AES-256</p>
@@ -293,11 +345,13 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
               </div>
 
               <div className="bg-yellow-900 rounded-lg p-4">
-                <h4 className="font-medium text-yellow-200 mb-2">Information importante</h4>
+                <h4 className="font-medium text-yellow-200 mb-2">
+                  Information importante
+                </h4>
                 <p className="text-sm text-yellow-300">
-                  La perte de vos données de navigateur (cache, localStorage) entraînera la perte
-                  définitive de toutes vos notes et préférences. Pensez à exporter régulièrement
-                  vos données.
+                  La perte de vos données de navigateur (cache, localStorage)
+                  entraînera la perte définitive de toutes vos notes et
+                  préférences. Pensez à exporter régulièrement vos données.
                 </p>
               </div>
             </div>
@@ -316,7 +370,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
 
           <label className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
             <Upload className="w-4 h-4" />
-            {isImporting ? 'Importation...' : 'Importer'}
+            {isImporting ? "Importation..." : "Importer"}
             <input
               type="file"
               accept=".json"

@@ -13,10 +13,7 @@ import {
   closestCorners,
   useDroppable,
 } from "@dnd-kit/core";
-import type {
-  DragEndEvent,
-  DragStartEvent,
-} from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -89,28 +86,28 @@ export default function TodoBoard({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     setActiveId(null);
     setDraggedTask(null);
-    
+
     if (!over) return;
-    
+
     const activeId = active.id as string;
     const overId = over.id as string;
-    
+
     // Trouver la tâche qui a été déplacée
     const activeTask = Object.values(tasksByStatus)
       .flat()
       .find((t) => t.id === activeId);
-    
+
     if (!activeTask) return;
-    
+
     // Si on drop sur une autre tâche ou sur une colonne
     if (overId !== activeId) {
       // Chercher dans quelle colonne se trouve la cible
       let targetStatus: TodoStatus | null = null;
       let targetIndex: number | null = null;
-      
+
       // Vérifier si overId correspond à une colonne
       if (TODO_STATUSES.some((status) => status.value === overId)) {
         targetStatus = overId as TodoStatus;
@@ -127,7 +124,7 @@ export default function TodoBoard({
           }
         }
       }
-      
+
       // Si on a trouvé un statut cible
       if (targetStatus) {
         if (targetStatus !== activeTask.status) {
@@ -136,14 +133,14 @@ export default function TodoBoard({
         } else if (targetIndex !== null) {
           // Réorganisation dans la même colonne
           const currentTasks = tasksByStatus[targetStatus];
-          const activeIndex = currentTasks.findIndex(t => t.id === activeId);
-          
+          const activeIndex = currentTasks.findIndex((t) => t.id === activeId);
+
           if (activeIndex !== -1 && activeIndex !== targetIndex) {
             // Créer un nouvel ordre pour les tâches
             const reorderedTasks = [...currentTasks];
             const [movedTask] = reorderedTasks.splice(activeIndex, 1);
             reorderedTasks.splice(targetIndex, 0, movedTask);
-            
+
             // Mettre à jour l'ordre de toutes les tâches affectées
             reorderedTasks.forEach((task, index) => {
               onUpdateTask(task.id, { order: index });
@@ -320,7 +317,7 @@ export default function TodoBoard({
 
     return (
       <div className="flex-1 min-w-0">
-        <div 
+        <div
           ref={setNodeRef}
           className="bg-gray-50 rounded-lg p-4 h-full min-h-[500px]"
         >

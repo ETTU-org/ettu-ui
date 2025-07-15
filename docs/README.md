@@ -9,30 +9,35 @@ Cette documentation complète couvre tous les aspects techniques et d'utilisatio
 ### 📋 Documents principaux
 
 1. **[SECURITY_COMPLETE.md](./SECURITY_COMPLETE.md)** - Documentation sécurité complète
+
    - Évaluation globale de sécurité (Score 9.2/10)
    - Mesures de sécurité implémentées
    - Tests et validation
    - Conformité RGPD
 
 2. **[LEGAL_COMPLETE.md](./LEGAL_COMPLETE.md)** - Documentation légale complète
+
    - Conditions générales d'utilisation
    - Politique de confidentialité
    - Mentions légales
    - Conformité RGPD
 
 3. **[STORAGE_SYSTEM.md](./STORAGE_SYSTEM.md)** - Système de stockage sécurisé
+
    - SecureStorage avec chiffrement AES-256
    - Hooks React pour intégration
    - Migration automatique
    - Performance et sécurité
 
 4. **[RESPONSIVE_SYSTEM.md](./RESPONSIVE_SYSTEM.md)** - Système responsive
+
    - Architecture mobile-first
    - Composants adaptatifs
    - Hooks pour responsive design
    - Optimisations mobiles
 
 5. **[SNIPPETS_SYSTEM.md](./SNIPPETS_SYSTEM.md)** - Système de snippets
+
    - Gestion d'extraits de code
    - Support multi-langages
    - Éditeur CodeMirror
@@ -47,6 +52,7 @@ Cette documentation complète couvre tous les aspects techniques et d'utilisatio
 ## 🚀 Démarrage Rapide
 
 ### Installation
+
 ```bash
 git clone https://github.com/julesbossis/ettu-ui.git
 cd ettu-ui
@@ -54,12 +60,14 @@ npm install
 ```
 
 ### Développement normal
+
 ```bash
 npm run dev
 # Accès sur http://localhost:5173
 ```
 
 ### Développement sécurisé
+
 ```bash
 npm run dev:secure
 # Accès sur http://localhost:5199
@@ -67,6 +75,7 @@ npm run dev:secure
 ```
 
 ### Production
+
 ```bash
 npm run build
 npm run preview
@@ -75,6 +84,7 @@ npm run preview
 ## 🔍 Architecture Générale
 
 ### Technologies utilisées
+
 - **Framework** : React 18 + TypeScript
 - **Bundler** : Vite
 - **Styling** : Tailwind CSS
@@ -83,6 +93,7 @@ npm run preview
 - **Tests** : Vitest, Testing Library
 
 ### Structure du projet
+
 ```
 ettu-ui/
 ├── src/
@@ -110,6 +121,7 @@ ettu-ui/
 - ✅ **Authentification dev** sécurisée
 
 ### Vérification de sécurité
+
 ```bash
 npm run test:security
 npm run security:check
@@ -118,10 +130,12 @@ npm run security:check
 ## 📱 Responsive Design
 
 ### Breakpoints
+
 - **Mobile** : < 768px
 - **Desktop** : ≥ 768px
 
 ### Fonctionnalités
+
 - Interface adaptative automatique
 - Onglets mobiles pour navigation
 - Optimisations de performance
@@ -130,12 +144,14 @@ npm run security:check
 ## 💾 Stockage
 
 ### Système SecureStorage
+
 - Chiffrement AES-256 des données
 - Compression et validation
 - Gestion TTL (Time To Live)
 - Migration automatique
 
 ### Hooks disponibles
+
 - `useSecureStorage<T>` - Stockage typé
 - `useUserPreferences` - Préférences utilisateur
 - `useDevAuth` - Authentification dev
@@ -143,16 +159,19 @@ npm run security:check
 ## 🧪 Tests
 
 ### Tests de sécurité
+
 ```bash
 npm run test:security
 ```
 
 ### Tests unitaires
+
 ```bash
 npm run test
 ```
 
 ### Tests en mode watch
+
 ```bash
 npm run test:watch
 ```
@@ -160,30 +179,36 @@ npm run test:watch
 ## 📊 Monitoring
 
 ### Logs de sécurité
+
 Les événements de sécurité sont automatiquement loggés et peuvent être consultés dans le panel admin (mode dev).
 
 ### Performance
+
 Le système surveille les performances et alerte en cas de dégradation.
 
 ## 🔧 Configuration
 
 ### Variables d'environnement
+
 ```bash
 NODE_ENV=development|production
 VITE_DEV_PORT=5199
 ```
 
 ### Configuration personnalisée
+
 Consultez les fichiers de configuration dans `src/config/`.
 
 ## 🚀 Déploiement
 
 ### Build de production
+
 ```bash
 npm run build
 ```
 
 ### Vérifications avant déploiement
+
 ```bash
 npm run lint
 npm run test
@@ -191,7 +216,9 @@ npm run test:security
 ```
 
 ### Hébergement
+
 L'application est prête pour être hébergée sur :
+
 - GitHub Pages
 - Netlify
 - Vercel
@@ -200,10 +227,12 @@ L'application est prête pour être hébergée sur :
 ## 📞 Support
 
 ### Contact
+
 - **Email** : julesbossis@gmail.com
 - **GitHub** : [julesbossis/ettu-ui](https://github.com/julesbossis/ettu-ui)
 
 ### Documentation
+
 - **Sécurité** : [SECURITY_COMPLETE.md](./SECURITY_COMPLETE.md)
 - **Légal** : [LEGAL_COMPLETE.md](./LEGAL_COMPLETE.md)
 - **Stockage** : [STORAGE_SYSTEM.md](./STORAGE_SYSTEM.md)
@@ -211,6 +240,7 @@ L'application est prête pour être hébergée sur :
 - **Snippets** : [SNIPPETS_SYSTEM.md](./SNIPPETS_SYSTEM.md)
 
 ### Délais de réponse
+
 - **Questions générales** : 48h
 - **Bugs critiques** : 24h
 - **Problèmes de sécurité** : 12h
@@ -218,16 +248,19 @@ L'application est prête pour être hébergée sur :
 ## 🔄 Maintenance
 
 ### Mises à jour
+
 - **Dépendances** : Vérification mensuelle
 - **Sécurité** : Vérification hebdomadaire
 - **Documentation** : Mise à jour à chaque release
 
 ### Versioning
+
 Le projet suit le versioning sémantique (SemVer).
 
 ## 🎯 Roadmap
 
 ### Prochaines fonctionnalités
+
 - [ ] Système de thèmes
 - [ ] Export/import de données
 - [ ] Collaboration en temps réel
@@ -235,6 +268,7 @@ Le projet suit le versioning sémantique (SemVer).
 - [ ] Synchronisation cloud
 
 ### Améliorations continues
+
 - [ ] Performances mobiles
 - [ ] Accessibilité
 - [ ] Internationalisation
@@ -242,6 +276,6 @@ Le projet suit le versioning sémantique (SemVer).
 
 ---
 
-*Documentation mise à jour le 14 juillet 2025*  
-*Version de l'application : 1.0.0*  
-*Prochaine révision : Avant déploiement production*
+_Documentation mise à jour le 14 juillet 2025_  
+_Version de l'application : 1.0.0_  
+_Prochaine révision : Avant déploiement production_

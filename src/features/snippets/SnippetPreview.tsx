@@ -1,12 +1,12 @@
 /**
  * SnippetPreview - Composant de prévisualisation d'un snippet
- * 
+ *
  * Ce composant affiche un snippet en mode lecture seule avec :
  * - Coloration syntaxique du code
  * - Métadonnées complètes
  * - Actions rapides (copier, éditer, supprimer)
  * - Interface optimisée pour la prévisualisation
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -42,10 +42,10 @@ interface SnippetPreviewProps {
 
 /**
  * Composant de prévisualisation de snippet
- * 
+ *
  * Affiche un snippet en mode lecture seule avec toutes ses métadonnées
  * et les actions disponibles
- * 
+ *
  * @param props - Les propriétés du composant
  * @returns Le composant de prévisualisation
  */
@@ -59,7 +59,7 @@ export default function SnippetPreview({
 
   /**
    * Obtient la couleur de badge appropriée pour un langage donné
-   * 
+   *
    * @param language - Le nom du langage de programmation
    * @returns Les classes CSS pour le badge coloré
    */
@@ -75,7 +75,7 @@ export default function SnippetPreview({
       less: "bg-indigo-600",
       jsx: "bg-cyan-600",
       tsx: "bg-sky-600",
-      
+
       // Backend & Systems
       python: "bg-green-600",
       rust: "bg-orange-700",
@@ -91,19 +91,19 @@ export default function SnippetPreview({
       dart: "bg-sky-700",
       scala: "bg-red-800",
       elixir: "bg-purple-800",
-      
+
       // Scripting & Shell
       bash: "bg-gray-700",
       shell: "bg-gray-700",
       powershell: "bg-blue-900",
       makefile: "bg-green-800",
-      
+
       // Data & Analytics
       r: "bg-blue-500",
       julia: "bg-green-500",
       matlab: "bg-orange-800",
       sql: "bg-blue-800",
-      
+
       // DevOps & Config
       dockerfile: "bg-cyan-800",
       yaml: "bg-red-500",
@@ -114,42 +114,42 @@ export default function SnippetPreview({
       ansible: "bg-red-600",
       nginx: "bg-green-700",
       apache: "bg-red-700",
-      
+
       // Documentation
       markdown: "bg-gray-800",
       restructuredtext: "bg-yellow-700",
       latex: "bg-green-900",
       xml: "bg-orange-700",
     };
-    
+
     return colors[lang] || "bg-gray-600";
   };
 
   /**
    * Obtient l'extension CodeMirror appropriée pour un langage donné
-   * 
+   *
    * @param language - Le nom du langage de programmation
    * @returns Un tableau d'extensions CodeMirror pour la coloration syntaxique
    */
   const getLanguageExtension = (language: string) => {
     switch (language.toLowerCase()) {
-      case 'javascript':
-      case 'js':
+      case "javascript":
+      case "js":
         return [javascript()];
-      case 'typescript':
-      case 'ts':
+      case "typescript":
+      case "ts":
         return [javascript({ typescript: true })];
-      case 'python':
-      case 'py':
+      case "python":
+      case "py":
         return [python()];
-      case 'html':
+      case "html":
         return [html()];
-      case 'css':
+      case "css":
         return [css()];
-      case 'json':
+      case "json":
         return [json()];
-      case 'markdown':
-      case 'md':
+      case "markdown":
+      case "md":
         return [markdown()];
       default:
         return [];
@@ -175,7 +175,11 @@ export default function SnippetPreview({
       {/* En-tête avec titre et actions */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <span className={`px-2 py-1 rounded text-xs font-medium text-white ${getLanguageBadgeColor(snippet.language)}`}>
+          <span
+            className={`px-2 py-1 rounded text-xs font-medium text-white ${getLanguageBadgeColor(
+              snippet.language
+            )}`}
+          >
             {snippet.language}
           </span>
           <h3 className="text-lg font-semibold text-white">{snippet.title}</h3>

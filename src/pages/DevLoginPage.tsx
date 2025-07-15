@@ -1,27 +1,29 @@
-import { useState } from 'react';
-import { useDevAuth } from '../hooks/useDevAuth';
+import { useState } from "react";
+import { useDevAuth } from "../hooks/useDevAuth";
 
 export default function DevLoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useDevAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     // Simuler un délai pour l'auth
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const success = login(username, password);
-    
+
     if (!success) {
-      setError('Identifiants invalides. Utilisez admin/admin pour le développement.');
+      setError(
+        "Identifiants invalides. Utilisez admin/admin pour le développement."
+      );
     }
-    
+
     setIsLoading(false);
   };
 
@@ -41,11 +43,14 @@ export default function DevLoginPage() {
             </div>
           </div>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-300"
+              >
                 Nom d'utilisateur
               </label>
               <input
@@ -59,9 +64,12 @@ export default function DevLoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-300"
+              >
                 Mot de passe
               </label>
               <input
@@ -79,9 +87,7 @@ export default function DevLoginPage() {
 
           {error && (
             <div className="rounded-md bg-red-900 border border-red-700 p-4">
-              <div className="text-sm text-red-200">
-                {error}
-              </div>
+              <div className="text-sm text-red-200">{error}</div>
             </div>
           )}
 
@@ -97,11 +103,11 @@ export default function DevLoginPage() {
                   Connexion...
                 </>
               ) : (
-                'Se connecter'
+                "Se connecter"
               )}
             </button>
           </div>
-          
+
           <div className="text-center">
             <div className="text-xs text-gray-400">
               💡 Astuce : admin / admin

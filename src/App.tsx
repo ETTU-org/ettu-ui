@@ -34,46 +34,46 @@ export default function App() {
             <Route path="/cgu" element={<CGUPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/legal-notice" element={<LegalNoticePage />} />
-            
+
             {/* Route de login dev - uniquement sur port 5199 */}
-            <Route 
-              path="/dev/login" 
+            <Route
+              path="/dev/login"
               element={
                 <DevLoginRoute>
                   <DevLoginPage />
                 </DevLoginRoute>
-              } 
+              }
             />
-            
+
             {/* Routes de développement - uniquement sur port 5199 */}
-            <Route 
-              path="/admin" 
+            <Route
+              path="/admin"
               element={
                 <DevOnlyRoute>
                   <AdminPanelPage />
                 </DevOnlyRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin/storage" 
+            <Route
+              path="/admin/storage"
               element={
                 <DevOnlyRoute>
                   <AdminStoragePage />
                 </DevOnlyRoute>
-              } 
+              }
             />
-            <Route 
-              path="/test" 
+            <Route
+              path="/test"
               element={
                 <DevOnlyRoute>
                   <TestPage />
                 </DevOnlyRoute>
-              } 
+              }
             />
-            
+
             {/* Route 404 explicite */}
             <Route path="/404" element={<NotFoundPage />} />
-            
+
             {/* Catch-all route */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

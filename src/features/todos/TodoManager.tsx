@@ -180,9 +180,7 @@ export default function TodoManager() {
           <div className="space-y-1">
             <div className="flex justify-between">
               <span className="text-gray-400">Total:</span>
-              <span className="font-medium text-white">
-                {stats.totalTasks}
-              </span>
+              <span className="font-medium text-white">{stats.totalTasks}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Terminées:</span>
@@ -215,135 +213,135 @@ export default function TodoManager() {
     { mode: "timeline" as const, icon: Clock, label: "Timeline" },
   ];
 
-    return (
-      <div className="h-full flex flex-col bg-gray-900">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold text-white">TODO Techniques</h1>
-            <div className="flex items-center space-x-1 bg-gray-700 rounded-lg p-1">
-              {viewModeButtons.map(({ mode, icon: Icon, label }) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === mode
-                      ? "bg-gray-600 text-blue-400 shadow-sm"
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                  title={label}
-                >
-                  <Icon className="w-4 h-4" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => {
-                setShowFilters(!showFilters);
-                setShowStats(false);
-                setShowProjectManager(false);
-                setShowTaskForm(false);
-              }}
-              className={`p-2 rounded-lg transition-colors ${
-                showFilters
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:bg-gray-700"
-              }`}
-              title="Filtres"
-            >
-              <Filter className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => {
-                setShowStats(!showStats);
-                setShowFilters(false);
-                setShowProjectManager(false);
-                setShowTaskForm(false);
-              }}
-              className={`p-2 rounded-lg transition-colors ${
-                showStats
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:bg-gray-700"
-              }`}
-              title="Statistiques"
-            >
-              <BarChart3 className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => {
-                setShowProjectManager(!showProjectManager);
-                setShowFilters(false);
-                setShowStats(false);
-                setShowTaskForm(false);
-              }}
-              className={`p-2 rounded-lg transition-colors ${
-                showProjectManager
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:bg-gray-700"
-              }`}
-              title="Projets"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-
-            {/* Bouton pour charger les données de test */}
-            <button
-              onClick={() => {
-                if (
-                  confirm(
-                    "Voulez-vous charger les données de test ? Cela remplacera vos données actuelles."
-                  )
-                ) {
-                  loadSampleData();
-                }
-              }}
-              className="p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
-              title="Charger les données de test"
-            >
-              <span className="text-sm">🎯</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setShowTaskForm(!showTaskForm);
-                setShowFilters(false);
-                setShowStats(false);
-                setShowProjectManager(false);
-                setEditingTask(null);
-              }}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Nouvelle tâche</span>
-            </button>
+  return (
+    <div className="h-full flex flex-col bg-gray-900">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-xl font-bold text-white">TODO Techniques</h1>
+          <div className="flex items-center space-x-1 bg-gray-700 rounded-lg p-1">
+            {viewModeButtons.map(({ mode, icon: Icon, label }) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === mode
+                    ? "bg-gray-600 text-blue-400 shadow-sm"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                title={label}
+              >
+                <Icon className="w-4 h-4" />
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-h-0">
-          {isMobile ? (
-            <ResponsiveLayout
-              mainContent={renderMainContent()}
-              previewContent={renderSidebar()}
-              tabs={[
-                { id: "main", label: "Tâches", icon: "📋" },
-                { id: "preview", label: "Outils", icon: "🛠️" },
-              ]}
-            />
-          ) : (
-            <div className="flex h-full">
-              <div className="flex-1 p-4 bg-gray-900">{renderMainContent()}</div>
-              <div className="w-80 border-l border-gray-700 bg-gray-800">
-                {renderSidebar()}
-              </div>
-            </div>
-          )}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => {
+              setShowFilters(!showFilters);
+              setShowStats(false);
+              setShowProjectManager(false);
+              setShowTaskForm(false);
+            }}
+            className={`p-2 rounded-lg transition-colors ${
+              showFilters
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:bg-gray-700"
+            }`}
+            title="Filtres"
+          >
+            <Filter className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => {
+              setShowStats(!showStats);
+              setShowFilters(false);
+              setShowProjectManager(false);
+              setShowTaskForm(false);
+            }}
+            className={`p-2 rounded-lg transition-colors ${
+              showStats
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:bg-gray-700"
+            }`}
+            title="Statistiques"
+          >
+            <BarChart3 className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => {
+              setShowProjectManager(!showProjectManager);
+              setShowFilters(false);
+              setShowStats(false);
+              setShowTaskForm(false);
+            }}
+            className={`p-2 rounded-lg transition-colors ${
+              showProjectManager
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:bg-gray-700"
+            }`}
+            title="Projets"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Bouton pour charger les données de test */}
+          <button
+            onClick={() => {
+              if (
+                confirm(
+                  "Voulez-vous charger les données de test ? Cela remplacera vos données actuelles."
+                )
+              ) {
+                loadSampleData();
+              }
+            }}
+            className="p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
+            title="Charger les données de test"
+          >
+            <span className="text-sm">🎯</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setShowTaskForm(!showTaskForm);
+              setShowFilters(false);
+              setShowStats(false);
+              setShowProjectManager(false);
+              setEditingTask(null);
+            }}
+            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Nouvelle tâche</span>
+          </button>
         </div>
       </div>
-    );
+
+      {/* Content */}
+      <div className="flex-1 min-h-0">
+        {isMobile ? (
+          <ResponsiveLayout
+            mainContent={renderMainContent()}
+            previewContent={renderSidebar()}
+            tabs={[
+              { id: "main", label: "Tâches", icon: "📋" },
+              { id: "preview", label: "Outils", icon: "🛠️" },
+            ]}
+          />
+        ) : (
+          <div className="flex h-full">
+            <div className="flex-1 p-4 bg-gray-900">{renderMainContent()}</div>
+            <div className="w-80 border-l border-gray-700 bg-gray-800">
+              {renderSidebar()}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

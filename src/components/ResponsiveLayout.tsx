@@ -1,10 +1,10 @@
 /**
  * Layout responsif pour les interfaces à deux colonnes
- * 
+ *
  * Ce composant gère automatiquement l'affichage :
  * - Desktop : 2 colonnes côte à côte
  * - Mobile : 1 colonne avec navigation par onglets
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -19,9 +19,9 @@
  * ```
  */
 
-import type { ReactNode } from 'react';
-import { useResponsiveView, type ViewType } from '../hooks/useResponsiveView';
-import MobileTabs from './MobileTabs';
+import type { ReactNode } from "react";
+import { useResponsiveView, type ViewType } from "../hooks/useResponsiveView";
+import MobileTabs from "./MobileTabs";
 
 interface Tab {
   id: ViewType;
@@ -44,7 +44,7 @@ interface ResponsiveLayoutProps {
 
 /**
  * Layout responsif avec gestion automatique mobile/desktop
- * 
+ *
  * @param props - Les propriétés du composant
  * @returns Le layout adaptatif
  */
@@ -52,8 +52,8 @@ export default function ResponsiveLayout({
   mainContent,
   previewContent,
   tabs,
-  className = '',
-  gridCols = 'md:grid-cols-2'
+  className = "",
+  gridCols = "md:grid-cols-2",
 }: ResponsiveLayoutProps) {
   const { isMobile, activeView, setActiveView } = useResponsiveView();
 
@@ -67,16 +67,28 @@ export default function ResponsiveLayout({
           tabs={tabs}
         />
       )}
-      
+
       {/* Contenu principal */}
-      <div className={`flex-1 overflow-hidden ${isMobile ? 'block' : `grid ${gridCols} gap-4`}`}>
+      <div
+        className={`flex-1 overflow-hidden ${
+          isMobile ? "block" : `grid ${gridCols} gap-4`
+        }`}
+      >
         {/* Vue principale */}
-        <div className={`${isMobile && activeView !== 'main' ? 'hidden' : 'block'} ${isMobile ? 'h-full' : ''}`}>
+        <div
+          className={`${
+            isMobile && activeView !== "main" ? "hidden" : "block"
+          } ${isMobile ? "h-full" : ""}`}
+        >
           {mainContent}
         </div>
-        
+
         {/* Vue de prévisualisation */}
-        <div className={`${isMobile && activeView !== 'preview' ? 'hidden' : 'block'} ${isMobile ? 'h-full' : ''}`}>
+        <div
+          className={`${
+            isMobile && activeView !== "preview" ? "hidden" : "block"
+          } ${isMobile ? "h-full" : ""}`}
+        >
           {previewContent}
         </div>
       </div>

@@ -1,10 +1,10 @@
 /**
  * SnippetEditor - Composant d'édition et de création de snippets
- * 
+ *
  * Ce composant fournit une interface complète pour créer de nouveaux snippets
  * ou modifier des snippets existants. Il inclut un formulaire avec validation
  * et un éditeur de code avec coloration syntaxique.
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -40,17 +40,21 @@ interface SnippetEditorProps {
 
 /**
  * Composant d'édition de snippets de code
- * 
+ *
  * Permet de créer et modifier des snippets avec :
  * - Un éditeur de code avec coloration syntaxique (CodeMirror)
  * - Sélection du langage par catégories
  * - Gestion des tags et métadonnées
  * - Validation des champs obligatoires
- * 
+ *
  * @param props - Les propriétés du composant
  * @returns Le composant d'édition de snippet
  */
-export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEditorProps) {
+export default function SnippetEditor({
+  snippet,
+  onSave,
+  onCancel,
+}: SnippetEditorProps) {
   // État du formulaire
   const [formData, setFormData] = useState<SnippetFormData>({
     title: "",
@@ -80,7 +84,7 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
 
   /**
    * Obtient l'extension CodeMirror appropriée pour un langage donné
-   * 
+   *
    * @param language - Le nom du langage de programmation
    * @returns Un tableau d'extensions CodeMirror pour la coloration syntaxique
    */
@@ -131,18 +135,18 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
   /**
    * Gestionnaire de soumission du formulaire
    * Valide les champs obligatoires et appelle onSave
-   * 
+   *
    * @param e - L'événement de soumission du formulaire
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation des champs obligatoires
     if (!formData.title.trim() || !formData.code.trim()) {
       alert("Le titre et le code sont obligatoires");
       return;
     }
-    
+
     onSave(formData);
   };
 
@@ -152,9 +156,9 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
    */
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, tagInput.trim()],
       }));
       setTagInput("");
     }
@@ -162,20 +166,20 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
 
   /**
    * Supprime un tag de la liste
-   * 
+   *
    * @param tagToRemove - Le tag à supprimer
    */
   const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   /**
    * Gestionnaire de touches pour l'input des tags
    * Permet d'ajouter un tag en appuyant sur Entrée
-   * 
+   *
    * @param e - L'événement clavier
    */
   const handleTagInputKeyPress = (e: React.KeyboardEvent) => {
@@ -191,12 +195,46 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
    */
 
   const languages = {
-    "Web Frontend": ["JavaScript", "TypeScript", "HTML", "CSS", "SCSS", "Less", "JSX", "TSX"],
-    "Backend & Systems": ["Python", "Rust", "Go", "Java", "C", "C++", "C#", "PHP", "Ruby", "Kotlin", "Swift", "Dart", "Scala", "Elixir"],
+    "Web Frontend": [
+      "JavaScript",
+      "TypeScript",
+      "HTML",
+      "CSS",
+      "SCSS",
+      "Less",
+      "JSX",
+      "TSX",
+    ],
+    "Backend & Systems": [
+      "Python",
+      "Rust",
+      "Go",
+      "Java",
+      "C",
+      "C++",
+      "C#",
+      "PHP",
+      "Ruby",
+      "Kotlin",
+      "Swift",
+      "Dart",
+      "Scala",
+      "Elixir",
+    ],
     "Scripting & Shell": ["Bash", "Shell", "PowerShell", "Makefile"],
     "Data & Analytics": ["R", "Julia", "MATLAB", "SQL"],
-    "DevOps & Config": ["Dockerfile", "YAML", "JSON", "TOML", "INI", "Terraform", "Ansible", "NGINX", "Apache"],
-    "Documentation": ["Markdown", "reStructuredText", "LaTeX", "XML"]
+    "DevOps & Config": [
+      "Dockerfile",
+      "YAML",
+      "JSON",
+      "TOML",
+      "INI",
+      "Terraform",
+      "Ansible",
+      "NGINX",
+      "Apache",
+    ],
+    Documentation: ["Markdown", "reStructuredText", "LaTeX", "XML"],
   };
 
   return (
@@ -206,7 +244,7 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
           <h3 className="text-lg font-semibold text-white mb-4">
             {snippet ? "Modifier le snippet" : "Nouveau snippet"}
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -215,7 +253,9 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Nom du snippet"
                 required
@@ -227,13 +267,17 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
               </label>
               <select
                 value={formData.language}
-                onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, language: e.target.value }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {Object.entries(languages).map(([category, langs]) => (
                   <optgroup key={category} label={category}>
-                    {langs.map(lang => (
-                      <option key={lang} value={lang.toLowerCase()}>{lang}</option>
+                    {langs.map((lang) => (
+                      <option key={lang} value={lang.toLowerCase()}>
+                        {lang}
+                      </option>
                     ))}
                   </optgroup>
                 ))}
@@ -247,7 +291,12 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={2}
               placeholder="Description du snippet"
@@ -262,7 +311,9 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
               <input
                 type="text"
                 value={formData.project}
-                onChange={(e) => setFormData(prev => ({ ...prev, project: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, project: e.target.value }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Nom du projet"
               />
@@ -316,7 +367,9 @@ export default function SnippetEditor({ snippet, onSave, onCancel }: SnippetEdit
           <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden">
             <CodeMirror
               value={formData.code}
-              onChange={(value) => setFormData(prev => ({ ...prev, code: value }))}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, code: value }))
+              }
               extensions={getLanguageExtension(formData.language)}
               theme="dark"
               className="text-sm"

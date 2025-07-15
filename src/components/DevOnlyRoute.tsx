@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useDevAuth } from '../hooks/useDevAuth';
+import { type ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useDevAuth } from "../hooks/useDevAuth";
 
 interface DevOnlyRouteProps {
   children: ReactNode;
@@ -30,7 +30,7 @@ interface DevNavLinkProps {
   className?: string;
 }
 
-export function DevNavLink({ to, children, className = '' }: DevNavLinkProps) {
+export function DevNavLink({ to, children, className = "" }: DevNavLinkProps) {
   const { isDevMode } = useDevAuth();
 
   if (!isDevMode) {

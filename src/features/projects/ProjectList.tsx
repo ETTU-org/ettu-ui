@@ -2,7 +2,7 @@
  * Composant de liste des projets
  */
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   FolderOpen,
   MoreVertical,
@@ -13,10 +13,10 @@ import {
   Code,
   CheckSquare,
   Users,
-  ExternalLink
-} from 'lucide-react';
-import type { ProjectStructure, ProjectViewMode } from '../../types/project';
-import { PROJECT_STATUSES } from '../../types/project';
+  ExternalLink,
+} from "lucide-react";
+import type { ProjectStructure, ProjectViewMode } from "../../types/project";
+import { PROJECT_STATUSES } from "../../types/project";
 
 interface ProjectListProps {
   projects: ProjectStructure[];
@@ -31,19 +31,21 @@ export default function ProjectList({
   viewMode,
   onSelectProject,
   onEditProject,
-  onDeleteProject
+  onDeleteProject,
 }: ProjectListProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const getStatusConfig = (status: string) => {
-    return PROJECT_STATUSES.find(s => s.value === status) || PROJECT_STATUSES[0];
+    return (
+      PROJECT_STATUSES.find((s) => s.value === status) || PROJECT_STATUSES[0]
+    );
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
+    return date.toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -55,7 +57,7 @@ export default function ProjectList({
       <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 hover:bg-gray-750 transition-colors">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
-          <div 
+          <div
             className="flex items-center space-x-3 cursor-pointer flex-1 min-w-0"
             onClick={() => onSelectProject(project)}
           >
@@ -64,13 +66,17 @@ export default function ProjectList({
               style={{ backgroundColor: project.color }}
             />
             <div className="min-w-0 flex-1">
-              <h3 className="font-medium text-white truncate">{project.name}</h3>
+              <h3 className="font-medium text-white truncate">
+                {project.name}
+              </h3>
               {project.description && (
-                <p className="text-sm text-gray-400 truncate mt-1">{project.description}</p>
+                <p className="text-sm text-gray-400 truncate mt-1">
+                  {project.description}
+                </p>
               )}
             </div>
           </div>
-          
+
           <div className="relative flex-shrink-0">
             <button
               onClick={(e) => {
@@ -81,7 +87,7 @@ export default function ProjectList({
             >
               <MoreVertical className="w-4 h-4" />
             </button>
-            
+
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10">
                 <button
@@ -125,7 +131,9 @@ export default function ProjectList({
 
         {/* Status */}
         <div className="flex items-center space-x-2 mb-3">
-          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
+          <span
+            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}
+          >
             <span className="mr-1">{statusConfig.icon}</span>
             {statusConfig.label}
           </span>
@@ -169,7 +177,7 @@ export default function ProjectList({
               <span>{project.stats.totalTasks}</span>
             </div>
           </div>
-          
+
           {project.metadata.team && project.metadata.team.length > 0 && (
             <div className="flex items-center space-x-1">
               <Users className="w-3 h-3" />
@@ -188,7 +196,7 @@ export default function ProjectList({
     return (
       <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 hover:bg-gray-750 transition-colors">
         <div className="flex items-center justify-between">
-          <div 
+          <div
             className="flex items-center space-x-4 cursor-pointer flex-1"
             onClick={() => onSelectProject(project)}
           >
@@ -196,18 +204,22 @@ export default function ProjectList({
               className="w-4 h-4 rounded-full flex-shrink-0"
               style={{ backgroundColor: project.color }}
             />
-            
+
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-3">
                 <h3 className="font-medium text-white">{project.name}</h3>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                <span
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}
+                >
                   <span className="mr-1">{statusConfig.icon}</span>
                   {statusConfig.label}
                 </span>
               </div>
-              
-              <p className="text-sm text-gray-400 mt-1">{project.description}</p>
-              
+
+              <p className="text-sm text-gray-400 mt-1">
+                {project.description}
+              </p>
+
               <div className="flex items-center space-x-4 mt-2">
                 <div className="flex items-center space-x-1 text-xs text-gray-400">
                   <FileText className="w-3 h-3" />
@@ -229,14 +241,16 @@ export default function ProjectList({
 
               {project.metadata.technologies.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
-                  {project.metadata.technologies.slice(0, 5).map((tech, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-900 text-blue-300"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                  {project.metadata.technologies
+                    .slice(0, 5)
+                    .map((tech, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-900 text-blue-300"
+                      >
+                        {tech}
+                      </span>
+                    ))}
                   {project.metadata.technologies.length > 5 && (
                     <span className="text-xs text-gray-400">
                       +{project.metadata.technologies.length - 5}
@@ -257,7 +271,7 @@ export default function ProjectList({
             >
               <MoreVertical className="w-4 h-4" />
             </button>
-            
+
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-700 border border-gray-600 rounded-lg shadow-lg z-10">
                 <button
@@ -325,7 +339,7 @@ export default function ProjectList({
 
   return (
     <div className="h-full p-4" onClick={handleBackdropClick}>
-      {viewMode === 'grid' ? (
+      {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />

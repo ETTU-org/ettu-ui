@@ -1,13 +1,16 @@
-import { type ReactNode } from 'react';
-import { useDevAuth } from '../hooks/useDevAuth';
-import DevLoginPage from '../pages/DevLoginPage';
+import { type ReactNode } from "react";
+import { useDevAuth } from "../hooks/useDevAuth";
+import DevLoginPage from "../pages/DevLoginPage";
 
 interface DevRouteGuardProps {
   children: ReactNode;
   fallback?: ReactNode;
 }
 
-export default function DevRouteGuard({ children, fallback }: DevRouteGuardProps) {
+export default function DevRouteGuard({
+  children,
+  fallback,
+}: DevRouteGuardProps) {
   const { isDevMode, isAuthenticated } = useDevAuth();
 
   // Si on n'est pas en mode dev, on affiche le contenu normal

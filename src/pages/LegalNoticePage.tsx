@@ -49,12 +49,10 @@ const LegalNoticePage: React.FC = () => {
                   <strong>Technologie :</strong> React, TypeScript, Vite
                 </p>
                 <p className="text-gray-300">
-                  <strong>Hébergement :</strong> GitHub Pages / Netlify /
-                  Vercel
+                  <strong>Hébergement :</strong> GitHub Pages / Netlify / Vercel
                 </p>
                 <p className="text-gray-300">
-                  <strong>Stockage :</strong> Local (localStorage du
-                  navigateur)
+                  <strong>Stockage :</strong> Local (localStorage du navigateur)
                 </p>
               </div>
             </section>
@@ -64,8 +62,8 @@ const LegalNoticePage: React.FC = () => {
                 3. Hébergement
               </h2>
               <p className="mb-4 text-gray-300 leading-relaxed">
-                L'application est hébergée sur une plateforme d'hébergement
-                web :
+                L'application est hébergée sur une plateforme d'hébergement web
+                :
               </p>
               <div className="bg-gray-700 p-4 rounded-lg">
                 <p className="text-gray-300">
@@ -73,8 +71,7 @@ const LegalNoticePage: React.FC = () => {
                   Netlify, ou Vercel)
                 </p>
                 <p className="text-gray-300">
-                  <strong>Localisation :</strong> Serveurs en
-                  Europe/États-Unis
+                  <strong>Localisation :</strong> Serveurs en Europe/États-Unis
                 </p>
                 <p className="text-gray-300">
                   <strong>Sécurité :</strong> HTTPS, certificats SSL
@@ -87,8 +84,8 @@ const LegalNoticePage: React.FC = () => {
                 4. Propriété intellectuelle
               </h2>
               <p className="mb-4 text-gray-300 leading-relaxed">
-                L'application ETTU et son code source sont protégés par le
-                droit d'auteur :
+                L'application ETTU et son code source sont protégés par le droit
+                d'auteur :
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-300">
                 <li>
@@ -134,8 +131,7 @@ const LegalNoticePage: React.FC = () => {
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-300">
                 <li>
-                  De la perte de données due à des dysfonctionnements
-                  techniques
+                  De la perte de données due à des dysfonctionnements techniques
                 </li>
                 <li>De l'interruption temporaire ou définitive du service</li>
                 <li>De l'usage fait par l'utilisateur de l'application</li>
@@ -184,9 +180,8 @@ const LegalNoticePage: React.FC = () => {
                 8. Droit applicable
               </h2>
               <p className="mb-4 text-gray-300 leading-relaxed">
-                Les présentes mentions légales sont soumises au droit
-                français. En cas de litige, les tribunaux français seront
-                compétents.
+                Les présentes mentions légales sont soumises au droit français.
+                En cas de litige, les tribunaux français seront compétents.
               </p>
               <div className="bg-gray-700 p-4 rounded-lg">
                 <p className="text-gray-300">

@@ -2,9 +2,17 @@
  * Composant vue timeline pour les tâches TODO
  */
 
-import { useState, useMemo } from 'react';
-import { Clock, Calendar, User, CheckCircle, AlertCircle, PlayCircle, PauseCircle } from 'lucide-react';
-import type { TodoTask, TodoProject } from '../../types/todo';
+import { useState, useMemo } from "react";
+import {
+  Clock,
+  Calendar,
+  User,
+  CheckCircle,
+  AlertCircle,
+  PlayCircle,
+  PauseCircle,
+} from "lucide-react";
+import type { TodoTask, TodoProject } from "../../types/todo";
 
 interface TodoTimelineProps {
   tasks: TodoTask[];
@@ -17,34 +25,44 @@ interface TodoTimelineProps {
 interface TimelineEvent {
   date: Date;
   task: TodoTask;
-  type: 'created' | 'updated' | 'completed' | 'due';
+  type: "created" | "updated" | "completed" | "due";
   label: string;
 }
 
-export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimelineProps) {
-  const [viewMode, setViewMode] = useState<'chronological' | 'deadline'>('chronological');
-  const [selectedProject, setSelectedProject] = useState<string>('all');
+export default function TodoTimeline({
+  tasks,
+  onEditTask,
+  projects,
+}: TodoTimelineProps) {
+  const [viewMode, setViewMode] = useState<"chronological" | "deadline">(
+    "chronological"
+  );
+  const [selectedProject, setSelectedProject] = useState<string>("all");
 
   // Générer les événements de la timeline
   const timelineEvents = useMemo(() => {
     const events: TimelineEvent[] = [];
 
-    tasks.forEach(task => {
+    tasks.forEach((task) => {
       // Événement de création
       events.push({
         date: new Date(task.createdAt),
         task,
-        type: 'created',
-        label: 'Créée'
+        type: "created",
+        label: "Créée",
       });
 
       // Événement de mise à jour (si différent de création)
-      if (task.updatedAt && new Date(task.updatedAt).getTime() !== new Date(task.createdAt).getTime()) {
+      if (
+        task.updatedAt &&
+        new Date(task.updatedAt).getTime() !==
+          new Date(task.createdAt).getTime()
+      ) {
         events.push({
           date: new Date(task.updatedAt),
           task,
-          type: 'updated',
-          label: 'Mise à jour'
+          type: "updated",
+          label: "Mise à jour",
         });
       }
 
@@ -53,8 +71,8 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
         events.push({
           date: new Date(task.completedAt),
           task,
-          type: 'completed',
-          label: 'Terminée'
+          type: "completed",
+          label: "Terminée",
         });
       }
 
@@ -63,24 +81,25 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
         events.push({
           date: new Date(task.dueDate),
           task,
-          type: 'due',
-          label: 'Échéance'
+          type: "due",
+          label: "Échéance",
         });
       }
     });
 
     // Filtrer par projet si sélectionné
-    const filteredEvents = selectedProject === 'all' 
-      ? events 
-      : events.filter(event => event.task.project === selectedProject);
+    const filteredEvents =
+      selectedProject === "all"
+        ? events
+        : events.filter((event) => event.task.project === selectedProject);
 
     // Trier par date
-    if (viewMode === 'chronological') {
+    if (viewMode === "chronological") {
       return filteredEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
     } else {
       // Mode deadline : ne garder que les événements d'échéance, triés par date croissante
       return filteredEvents
-        .filter(event => event.type === 'due')
+        .filter((event) => event.type === "due")
         .sort((a, b) => a.date.getTime() - b.date.getTime());
     }
   }, [tasks, viewMode, selectedProject]);
@@ -88,8 +107,8 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
   // Grouper les événements par date
   const groupedEvents = useMemo(() => {
     const groups: { [key: string]: TimelineEvent[] } = {};
-    
-    timelineEvents.forEach(event => {
+
+    timelineEvents.forEach((event) => {
       const dateKey = event.date.toDateString();
       if (!groups[dateKey]) {
         groups[dateKey] = [];
@@ -99,56 +118,80 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
 
     return Object.entries(groups).map(([dateKey, events]) => ({
       date: new Date(dateKey),
-      events: events.sort((a, b) => b.date.getTime() - a.date.getTime())
+      events: events.sort((a, b) => b.date.getTime() - a.date.getTime()),
     }));
   }, [timelineEvents]);
 
   const getEventIcon = (type: string) => {
     switch (type) {
-      case 'created': return <PlayCircle className="w-4 h-4 text-blue-500" />;
-      case 'updated': return <Clock className="w-4 h-4 text-orange-500" />;
-      case 'completed': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'due': return <AlertCircle className="w-4 h-4 text-red-500" />;
-      default: return <PauseCircle className="w-4 h-4 text-gray-500" />;
+      case "created":
+        return <PlayCircle className="w-4 h-4 text-blue-500" />;
+      case "updated":
+        return <Clock className="w-4 h-4 text-orange-500" />;
+      case "completed":
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "due":
+        return <AlertCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <PauseCircle className="w-4 h-4 text-gray-500" />;
     }
   };
 
   const getEventColor = (type: string) => {
     switch (type) {
-      case 'created': return 'bg-blue-900 border-blue-700 text-blue-300';
-      case 'updated': return 'bg-orange-900 border-orange-700 text-orange-300';
-      case 'completed': return 'bg-green-900 border-green-700 text-green-300';
-      case 'due': return 'bg-red-900 border-red-700 text-red-300';
-      default: return 'bg-gray-800 border-gray-600 text-gray-300';
+      case "created":
+        return "bg-blue-900 border-blue-700 text-blue-300";
+      case "updated":
+        return "bg-orange-900 border-orange-700 text-orange-300";
+      case "completed":
+        return "bg-green-900 border-green-700 text-green-300";
+      case "due":
+        return "bg-red-900 border-red-700 text-red-300";
+      default:
+        return "bg-gray-800 border-gray-600 text-gray-300";
     }
   };
 
   const getTaskPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case "urgent":
+        return "bg-red-500";
+      case "high":
+        return "bg-orange-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getTaskStatusColor = (status: string) => {
     switch (status) {
-      case 'backlog': return 'text-gray-400';
-      case 'in-progress': return 'text-blue-400';
-      case 'testing': return 'text-purple-400';
-      case 'done': return 'text-green-400';
-      default: return 'text-gray-400';
+      case "backlog":
+        return "text-gray-400";
+      case "in-progress":
+        return "text-blue-400";
+      case "testing":
+        return "text-purple-400";
+      case "done":
+        return "text-green-400";
+      default:
+        return "text-gray-400";
     }
   };
 
   const getProjectById = (projectId: string) => {
-    return projects.find(p => p.id === projectId);
+    return projects.find((p) => p.id === projectId);
   };
 
   const isOverdue = (task: TodoTask) => {
-    return task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'done';
+    return (
+      task.dueDate &&
+      new Date(task.dueDate) < new Date() &&
+      task.status !== "done"
+    );
   };
 
   return (
@@ -157,25 +200,25 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <div className="flex items-center space-x-4">
           <h2 className="text-lg font-semibold text-white">Timeline</h2>
-          
+
           {/* View Mode Toggle */}
           <div className="flex items-center space-x-1 bg-gray-700 rounded-lg p-1">
             <button
-              onClick={() => setViewMode('chronological')}
+              onClick={() => setViewMode("chronological")}
               className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                viewMode === 'chronological'
-                  ? 'bg-gray-600 text-blue-400 shadow-sm'
-                  : 'text-gray-400 hover:text-white'
+                viewMode === "chronological"
+                  ? "bg-gray-600 text-blue-400 shadow-sm"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
               Chronologique
             </button>
             <button
-              onClick={() => setViewMode('deadline')}
+              onClick={() => setViewMode("deadline")}
               className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                viewMode === 'deadline'
-                  ? 'bg-gray-600 text-blue-400 shadow-sm'
-                  : 'text-gray-400 hover:text-white'
+                viewMode === "deadline"
+                  ? "bg-gray-600 text-blue-400 shadow-sm"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
               Échéances
@@ -192,7 +235,7 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
             className="px-3 py-1 text-sm border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">Tous les projets</option>
-            {projects.map(project => (
+            {projects.map((project) => (
               <option key={project.id} value={project.id}>
                 {project.name}
               </option>
@@ -211,10 +254,9 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                 Aucun événement
               </h3>
               <p className="text-gray-400">
-                {viewMode === 'deadline' 
-                  ? 'Aucune tâche avec échéance trouvée'
-                  : 'Aucune activité trouvée pour ce projet'
-                }
+                {viewMode === "deadline"
+                  ? "Aucune tâche avec échéance trouvée"
+                  : "Aucune activité trouvée pour ce projet"}
               </p>
             </div>
           </div>
@@ -227,11 +269,11 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     <h3 className="text-sm font-medium text-white">
-                      {date.toLocaleDateString('fr-FR', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      {date.toLocaleDateString("fr-FR", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </h3>
                   </div>
@@ -244,11 +286,14 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
 
                   <div className="space-y-6">
                     {events.map((event, eventIndex) => {
-                      const project = getProjectById(event.task.project || '');
+                      const project = getProjectById(event.task.project || "");
                       const isTaskOverdue = isOverdue(event.task);
-                      
+
                       return (
-                        <div key={eventIndex} className="relative flex items-start space-x-4">
+                        <div
+                          key={eventIndex}
+                          className="relative flex items-start space-x-4"
+                        >
                           {/* Timeline Dot */}
                           <div className="flex-shrink-0 w-12 h-12 bg-gray-800 border-2 border-gray-600 rounded-full flex items-center justify-center">
                             {getEventIcon(event.type)}
@@ -256,10 +301,10 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
 
                           {/* Event Content */}
                           <div className="flex-1 min-w-0">
-                            <div 
-                              className={`p-4 rounded-lg border cursor-pointer hover:shadow-md transition-shadow ${
-                                getEventColor(event.type)
-                              } ${isTaskOverdue ? 'ring-2 ring-red-500' : ''}`}
+                            <div
+                              className={`p-4 rounded-lg border cursor-pointer hover:shadow-md transition-shadow ${getEventColor(
+                                event.type
+                              )} ${isTaskOverdue ? "ring-2 ring-red-500" : ""}`}
                               onClick={() => onEditTask(event.task)}
                             >
                               {/* Event Header */}
@@ -269,9 +314,9 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                                     {event.label}
                                   </span>
                                   <span className="text-xs text-gray-500">
-                                    {event.date.toLocaleTimeString('fr-FR', { 
-                                      hour: '2-digit', 
-                                      minute: '2-digit' 
+                                    {event.date.toLocaleTimeString("fr-FR", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
                                     })}
                                   </span>
                                 </div>
@@ -285,9 +330,19 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                               {/* Task Info */}
                               <div className="space-y-2">
                                 <div className="flex items-center space-x-2">
-                                  <div className={`w-2 h-2 rounded-full ${getTaskPriorityColor(event.task.priority)}`} />
-                                  <h4 className="font-medium text-white">{event.task.title}</h4>
-                                  <span className={`text-xs font-medium ${getTaskStatusColor(event.task.status)}`}>
+                                  <div
+                                    className={`w-2 h-2 rounded-full ${getTaskPriorityColor(
+                                      event.task.priority
+                                    )}`}
+                                  />
+                                  <h4 className="font-medium text-white">
+                                    {event.task.title}
+                                  </h4>
+                                  <span
+                                    className={`text-xs font-medium ${getTaskStatusColor(
+                                      event.task.status
+                                    )}`}
+                                  >
                                     {event.task.status}
                                   </span>
                                 </div>
@@ -308,7 +363,7 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                                         </span>
                                       </div>
                                     )}
-                                    
+
                                     {event.task.estimatedTime && (
                                       <div className="flex items-center space-x-1">
                                         <Clock className="w-3 h-3 text-gray-400" />
@@ -320,11 +375,11 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                                   </div>
 
                                   {project && (
-                                    <span 
+                                    <span
                                       className="text-xs px-2 py-1 rounded-full"
-                                      style={{ 
-                                        backgroundColor: `${project.color}20`, 
-                                        color: project.color 
+                                      style={{
+                                        backgroundColor: `${project.color}20`,
+                                        color: project.color,
                                       }}
                                     >
                                       {project.name}
@@ -332,23 +387,26 @@ export default function TodoTimeline({ tasks, onEditTask, projects }: TodoTimeli
                                   )}
                                 </div>
 
-                                {event.task.tags && event.task.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {event.task.tags.slice(0, 3).map(tag => (
-                                      <span 
-                                        key={tag}
-                                        className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
-                                    {event.task.tags.length > 3 && (
-                                      <span className="text-xs text-gray-400">
-                                        +{event.task.tags.length - 3}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
+                                {event.task.tags &&
+                                  event.task.tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-1">
+                                      {event.task.tags
+                                        .slice(0, 3)
+                                        .map((tag) => (
+                                          <span
+                                            key={tag}
+                                            className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
+                                          >
+                                            {tag}
+                                          </span>
+                                        ))}
+                                      {event.task.tags.length > 3 && (
+                                        <span className="text-xs text-gray-400">
+                                          +{event.task.tags.length - 3}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
                               </div>
                             </div>
                           </div>

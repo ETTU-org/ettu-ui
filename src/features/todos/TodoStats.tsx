@@ -2,9 +2,16 @@
  * Composant de statistiques pour les tâches TODO
  */
 
-import { PieChart, BarChart3, TrendingUp, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { TODO_TYPES, TODO_PRIORITIES, TODO_STATUSES } from '../../types/todo';
-import type { TodoStats, TodoTask, TodoProject } from '../../types/todo';
+import {
+  PieChart,
+  BarChart3,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+import { TODO_TYPES, TODO_PRIORITIES, TODO_STATUSES } from "../../types/todo";
+import type { TodoStats, TodoTask, TodoProject } from "../../types/todo";
 
 interface TodoStatsProps {
   stats: TodoStats;
@@ -13,9 +20,12 @@ interface TodoStatsProps {
 }
 
 export default function TodoStats({ stats, projects }: TodoStatsProps) {
-  const completionRateColor = stats.completionRate >= 80 ? 'text-green-600' : 
-                              stats.completionRate >= 60 ? 'text-yellow-600' : 
-                              'text-red-600';
+  const completionRateColor =
+    stats.completionRate >= 80
+      ? "text-green-600"
+      : stats.completionRate >= 60
+      ? "text-yellow-600"
+      : "text-red-600";
 
   const formatDays = (days: number) => {
     if (days < 1) return `${Math.round(days * 24)}h`;
@@ -39,31 +49,37 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
               <CheckCircle className="w-5 h-5 text-blue-600 mr-2" />
               <div>
                 <p className="text-sm text-blue-600">Total</p>
-                <p className="text-2xl font-bold text-blue-900">{stats.totalTasks}</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {stats.totalTasks}
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-green-50 rounded-lg p-4">
             <div className="flex items-center">
               <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
               <div>
                 <p className="text-sm text-green-600">Terminées</p>
-                <p className="text-2xl font-bold text-green-900">{stats.completedTasks}</p>
+                <p className="text-2xl font-bold text-green-900">
+                  {stats.completedTasks}
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-yellow-50 rounded-lg p-4">
             <div className="flex items-center">
               <AlertCircle className="w-5 h-5 text-yellow-600 mr-2" />
               <div>
                 <p className="text-sm text-yellow-600">En cours</p>
-                <p className="text-2xl font-bold text-yellow-900">{stats.inProgressTasks}</p>
+                <p className="text-2xl font-bold text-yellow-900">
+                  {stats.inProgressTasks}
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-purple-50 rounded-lg p-4">
             <div className="flex items-center">
               <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
@@ -86,7 +102,7 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${Math.min(stats.completionRate, 100)}%` }}
             />
@@ -100,24 +116,30 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             Par type
           </h3>
           <div className="space-y-2">
-            {TODO_TYPES.map(type => {
+            {TODO_TYPES.map((type) => {
               const count = stats.tasksByType[type.value] || 0;
-              const percentage = stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
-              
+              const percentage =
+                stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
+
               return (
-                <div key={type.value} className="flex items-center justify-between">
+                <div
+                  key={type.value}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center">
                     <span className="mr-2">{type.icon}</span>
                     <span className="text-sm text-gray-700">{type.label}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
+                      <div
                         className="bg-blue-600 h-2 rounded-full"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
+                    <span className="text-sm text-gray-600 w-8 text-right">
+                      {count}
+                    </span>
                   </div>
                 </div>
               );
@@ -132,24 +154,32 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             Par priorité
           </h3>
           <div className="space-y-2">
-            {TODO_PRIORITIES.map(priority => {
+            {TODO_PRIORITIES.map((priority) => {
               const count = stats.tasksByPriority[priority.value] || 0;
-              const percentage = stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
-              
+              const percentage =
+                stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
+
               return (
-                <div key={priority.value} className="flex items-center justify-between">
+                <div
+                  key={priority.value}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center">
                     <span className="mr-2">{priority.icon}</span>
-                    <span className="text-sm text-gray-700">{priority.label}</span>
+                    <span className="text-sm text-gray-700">
+                      {priority.label}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
+                      <div
                         className="bg-orange-600 h-2 rounded-full"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
+                    <span className="text-sm text-gray-600 w-8 text-right">
+                      {count}
+                    </span>
                   </div>
                 </div>
               );
@@ -164,24 +194,32 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             Par statut
           </h3>
           <div className="space-y-2">
-            {TODO_STATUSES.map(status => {
+            {TODO_STATUSES.map((status) => {
               const count = stats.tasksByStatus[status.value] || 0;
-              const percentage = stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
-              
+              const percentage =
+                stats.totalTasks > 0 ? (count / stats.totalTasks) * 100 : 0;
+
               return (
-                <div key={status.value} className="flex items-center justify-between">
+                <div
+                  key={status.value}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center">
                     <span className="mr-2">{status.icon}</span>
-                    <span className="text-sm text-gray-700">{status.label}</span>
+                    <span className="text-sm text-gray-700">
+                      {status.label}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
+                      <div
                         className="bg-green-600 h-2 rounded-full"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
+                    <span className="text-sm text-gray-600 w-8 text-right">
+                      {count}
+                    </span>
                   </div>
                 </div>
               );
@@ -195,7 +233,7 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             <Clock className="w-4 h-4 mr-2" />
             Temps et performance
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 rounded-lg p-3">
               <p className="text-xs text-gray-600">Temps moyen</p>
@@ -203,7 +241,7 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
                 {formatDays(stats.averageCompletionTime)}
               </p>
             </div>
-            
+
             <div className="bg-gray-50 rounded-lg p-3">
               <p className="text-xs text-gray-600">Projets actifs</p>
               <p className="text-lg font-semibold text-gray-900">
@@ -217,17 +255,26 @@ export default function TodoStats({ stats, projects }: TodoStatsProps) {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-700">Estimé:</span>
-                <span className="text-sm font-medium">{stats.estimatedVsActualTime.estimated}h</span>
+                <span className="text-sm font-medium">
+                  {stats.estimatedVsActualTime.estimated}h
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-700">Réel:</span>
-                <span className="text-sm font-medium">{stats.estimatedVsActualTime.actual}h</span>
+                <span className="text-sm font-medium">
+                  {stats.estimatedVsActualTime.actual}h
+                </span>
               </div>
               {stats.estimatedVsActualTime.estimated > 0 && (
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-700">Précision:</span>
                   <span className="text-sm font-medium">
-                    {Math.round((stats.estimatedVsActualTime.actual / stats.estimatedVsActualTime.estimated) * 100)}%
+                    {Math.round(
+                      (stats.estimatedVsActualTime.actual /
+                        stats.estimatedVsActualTime.estimated) *
+                        100
+                    )}
+                    %
                   </span>
                 </div>
               )}

@@ -1,49 +1,49 @@
-import { useState, useEffect, useCallback } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { markdown } from '@codemirror/lang-markdown';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-import { secureLocalStorage } from '../../utils/secureLocalStorage';
+import { useState, useEffect, useCallback } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { markdown } from "@codemirror/lang-markdown";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
+import { secureLocalStorage } from "../../utils/secureLocalStorage";
 
 // Fonctions de validation simplifiées
 const validateContent = (content: string) => {
   const errors: string[] = [];
-  
+
   if (content.length > 50000) {
-    errors.push('Le contenu ne peut pas dépasser 50,000 caractères');
+    errors.push("Le contenu ne peut pas dépasser 50,000 caractères");
   }
-  
+
   // Vérifier les scripts potentiellement dangereux
-  if (content.includes('<script>') || content.includes('javascript:')) {
-    errors.push('Le contenu ne peut pas contenir de scripts');
+  if (content.includes("<script>") || content.includes("javascript:")) {
+    errors.push("Le contenu ne peut pas contenir de scripts");
   }
-  
+
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
 const validateFilename = (filename: string) => {
   const errors: string[] = [];
-  
-  if (!filename || filename.trim() === '') {
-    errors.push('Le nom de fichier ne peut pas être vide');
+
+  if (!filename || filename.trim() === "") {
+    errors.push("Le nom de fichier ne peut pas être vide");
   }
-  
+
   if (filename.length > 255) {
-    errors.push('Le nom de fichier ne peut pas dépasser 255 caractères');
+    errors.push("Le nom de fichier ne peut pas dépasser 255 caractères");
   }
-  
+
   // Caractères interdits
   const forbiddenChars = /[<>:"/\\|?*]/;
   if (forbiddenChars.test(filename)) {
-    errors.push('Le nom de fichier contient des caractères interdits');
+    errors.push("Le nom de fichier contient des caractères interdits");
   }
-  
+
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
@@ -70,12 +70,18 @@ interface ProjectNote {
 /**
  * Composant d'édition de notes pour un projet spécifique
  */
-export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }: ProjectNoteEditorProps) {
-  const [content, setContent] = useState('');
-  const [fileName, setFileName] = useState('note-projet.md');
+export function ProjectNoteEditor({
+  projectId,
+  projectName,
+  onNotesCountChange,
+}: ProjectNoteEditorProps) {
+  const [content, setContent] = useState("");
+  const [fileName, setFileName] = useState("note-projet.md");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [contentValidationErrors, setContentValidationErrors] = useState<string[]>([]);
+  const [contentValidationErrors, setContentValidationErrors] = useState<
+    string[]
+  >([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [notes, setNotes] = useState<ProjectNote[]>([]);
   const [currentNoteId, setCurrentNoteId] = useState<string | null>(null);
@@ -91,7 +97,7 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
         if (storedNotes) {
           const projectNotes = JSON.parse(storedNotes) as ProjectNote[];
           setNotes(projectNotes);
-          
+
           // Charger la première note par défaut
           if (projectNotes.length > 0) {
             const firstNote = projectNotes[0];
@@ -101,10 +107,10 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
           }
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des notes du projet:', error);
-        logSecurityEvent('project_notes_load_error', {
+        console.error("Erreur lors du chargement des notes du projet:", error);
+        logSecurityEvent("project_notes_load_error", {
           projectId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     };
@@ -120,27 +126,33 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
   }, [notes.length, onNotesCountChange]);
 
   // Sauvegarder les notes du projet
-  const saveProjectNotes = useCallback((updatedNotes: ProjectNote[]) => {
-    try {
-      secureLocalStorage.setItem(storageKey, JSON.stringify(updatedNotes));
-      setNotes(updatedNotes);
-      setLastSaved(new Date());
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des notes du projet:', error);
-      logSecurityEvent('project_notes_save_error', {
-        projectId,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }, [projectId, storageKey]);
+  const saveProjectNotes = useCallback(
+    (updatedNotes: ProjectNote[]) => {
+      try {
+        secureLocalStorage.setItem(storageKey, JSON.stringify(updatedNotes));
+        setNotes(updatedNotes);
+        setLastSaved(new Date());
+      } catch (error) {
+        console.error(
+          "Erreur lors de la sauvegarde des notes du projet:",
+          error
+        );
+        logSecurityEvent("project_notes_save_error", {
+          projectId,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    },
+    [projectId, storageKey]
+  );
 
   // Auto-sauvegarde
   useEffect(() => {
     if (!currentNoteId || !content.trim()) return;
 
     const timeoutId = setTimeout(() => {
-      const updatedNotes = notes.map(note => 
-        note.id === currentNoteId 
+      const updatedNotes = notes.map((note) =>
+        note.id === currentNoteId
           ? { ...note, content, title: fileName, updatedAt: new Date() }
           : note
       );
@@ -154,12 +166,12 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
   useEffect(() => {
     const validation = validateContent(content);
     setContentValidationErrors(validation.errors);
-    
+
     if (!validation.isValid) {
-      logSecurityEvent('project_note_content_validation_error', {
+      logSecurityEvent("project_note_content_validation_error", {
         projectId,
         noteId: currentNoteId,
-        errors: validation.errors
+        errors: validation.errors,
       });
     }
   }, [content, currentNoteId, projectId]);
@@ -169,24 +181,24 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
     const newNote: ProjectNote = {
       id: Date.now().toString(),
       projectId,
-      title: 'Nouvelle note.md',
-      content: '',
+      title: "Nouvelle note.md",
+      content: "",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     const updatedNotes = [...notes, newNote];
     saveProjectNotes(updatedNotes);
     setCurrentNoteId(newNote.id);
-    setContent('');
+    setContent("");
     setFileName(newNote.title);
   };
 
   // Supprimer une note
   const deleteNote = (noteId: string) => {
-    const updatedNotes = notes.filter(note => note.id !== noteId);
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
     saveProjectNotes(updatedNotes);
-    
+
     if (currentNoteId === noteId) {
       if (updatedNotes.length > 0) {
         const firstNote = updatedNotes[0];
@@ -195,8 +207,8 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
         setFileName(firstNote.title);
       } else {
         setCurrentNoteId(null);
-        setContent('');
-        setFileName('note-projet.md');
+        setContent("");
+        setFileName("note-projet.md");
       }
     }
   };
@@ -215,18 +227,18 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
 
   // Effacer le contenu
   const clearContent = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir effacer tout le contenu ?')) {
-      setContent('');
-      logSecurityEvent('project_note_content_cleared', {
+    if (window.confirm("Êtes-vous sûr de vouloir effacer tout le contenu ?")) {
+      setContent("");
+      logSecurityEvent("project_note_content_cleared", {
         projectId,
-        noteId: currentNoteId
+        noteId: currentNoteId,
       });
     }
   };
 
   // Insérer un template
   const insertTemplate = (template: string) => {
-    setContent(prev => prev + '\n' + template);
+    setContent((prev) => prev + "\n" + template);
   };
 
   // Télécharger la note
@@ -234,22 +246,22 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
     if (!content.trim()) return;
 
     const validation = validateFilename(fileName);
-    const finalFileName = validation.isValid ? fileName : 'note-projet.md';
-    
-    const blob = new Blob([content], { type: 'text/markdown' });
+    const finalFileName = validation.isValid ? fileName : "note-projet.md";
+
+    const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = finalFileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    logSecurityEvent('project_note_downloaded', {
+
+    logSecurityEvent("project_note_downloaded", {
       projectId,
       noteId: currentNoteId,
-      filename: finalFileName
+      filename: finalFileName,
     });
   };
 
@@ -263,9 +275,7 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
               Notes du projet: {projectName}
             </h1>
             <div className="flex items-center gap-4 text-sm text-gray-400">
-              <span>
-                Rédigez et organisez vos notes en Markdown
-              </span>
+              <span>Rédigez et organisez vos notes en Markdown</span>
               {lastSaved && (
                 <span className="text-green-400">
                   • Sauvegardé à {lastSaved.toLocaleTimeString()}
@@ -283,12 +293,12 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
             <button
               onClick={() => setIsPreviewMode(!isPreviewMode)}
               className={`px-4 py-2 rounded text-sm transition-colors ${
-                isPreviewMode 
-                  ? 'bg-green-600 hover:bg-green-700' 
-                  : 'bg-gray-600 hover:bg-gray-700'
+                isPreviewMode
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-gray-600 hover:bg-gray-700"
               } text-white`}
             >
-              {isPreviewMode ? '📝 Éditer' : '👁️ Prévisualiser'}
+              {isPreviewMode ? "📝 Éditer" : "👁️ Prévisualiser"}
             </button>
           </div>
         </div>
@@ -304,8 +314,8 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
                 onClick={() => selectNote(note)}
                 className={`px-3 py-1 rounded text-sm transition-colors ${
                   currentNoteId === note.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
                 {note.title}
@@ -337,23 +347,23 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
                   onChange={(e) => {
                     const newFileName = e.target.value;
                     setFileName(newFileName);
-                    
+
                     const validation = validateFilename(newFileName);
                     setValidationErrors(validation.errors);
-                    
+
                     if (!validation.isValid) {
-                      logSecurityEvent('project_note_invalid_filename', {
+                      logSecurityEvent("project_note_invalid_filename", {
                         projectId,
                         noteId: currentNoteId,
                         errors: validation.errors,
-                        filename: newFileName
+                        filename: newFileName,
                       });
                     }
                   }}
                   className={`w-full md:w-auto px-3 py-1 border rounded text-sm focus:outline-none focus:ring-2 ${
-                    validationErrors.length > 0 
-                      ? 'border-red-500 bg-red-900 text-red-100 focus:ring-red-500' 
-                      : 'border-gray-600 bg-gray-800 text-white focus:ring-blue-500'
+                    validationErrors.length > 0
+                      ? "border-red-500 bg-red-900 text-red-100 focus:ring-red-500"
+                      : "border-gray-600 bg-gray-800 text-white focus:ring-blue-500"
                   }`}
                   placeholder="nom-de-la-note.md"
                 />
@@ -373,7 +383,7 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
                 💾 Télécharger
               </button>
             </div>
-            
+
             {/* Templates */}
             <div className="flex flex-wrap gap-2">
               <button
@@ -395,13 +405,19 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
                 💻 Code
               </button>
               <button
-                onClick={() => insertTemplate("[Texte du lien](https://exemple.com)")}
+                onClick={() =>
+                  insertTemplate("[Texte du lien](https://exemple.com)")
+                }
                 className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
               >
                 🔗 Lien
               </button>
               <button
-                onClick={() => insertTemplate("| Colonne 1 | Colonne 2 |\n|-----------|-----------||\n| Données 1 | Données 2 |")}
+                onClick={() =>
+                  insertTemplate(
+                    "| Colonne 1 | Colonne 2 |\n|-----------|-----------||\n| Données 1 | Données 2 |"
+                  )
+                }
                 className="px-2 md:px-3 py-1 bg-gray-700 border border-gray-600 text-white rounded text-xs md:text-sm hover:bg-gray-600 transition-colors"
               >
                 📊 Tableau
@@ -430,8 +446,8 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
           isPreviewMode ? (
             <PreviewView content={content} />
           ) : (
-            <EditorView 
-              content={content} 
+            <EditorView
+              content={content}
               setContent={handleContentChange}
               contentValidationErrors={contentValidationErrors}
             />
@@ -457,11 +473,11 @@ export function ProjectNoteEditor({ projectId, projectName, onNotesCountChange }
 /**
  * Composant d'édition Markdown
  */
-function EditorView({ 
-  content, 
-  setContent, 
-  contentValidationErrors 
-}: { 
+function EditorView({
+  content,
+  setContent,
+  contentValidationErrors,
+}: {
   content: string;
   setContent: (content: string) => void;
   contentValidationErrors: string[];
@@ -470,9 +486,7 @@ function EditorView({
     <div className="flex flex-col h-full p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-white">
-            Éditeur Markdown
-          </h2>
+          <h2 className="text-lg font-semibold text-white">Éditeur Markdown</h2>
           {contentValidationErrors.length > 0 && (
             <div className="flex items-center gap-1 text-red-400">
               <span className="text-sm">⚠️</span>
@@ -488,17 +502,19 @@ function EditorView({
           </span>
         </div>
       </div>
-      
+
       {/* Affichage des erreurs de validation */}
       {contentValidationErrors.length > 0 && (
         <div className="mb-3 p-3 bg-red-900 border border-red-700 rounded text-sm text-red-100">
           <div className="font-semibold mb-1">⚠️ Erreurs de validation :</div>
           {contentValidationErrors.map((error, index) => (
-            <div key={index} className="ml-2">• {error}</div>
+            <div key={index} className="ml-2">
+              • {error}
+            </div>
           ))}
         </div>
       )}
-      
+
       <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
         <CodeMirror
           value={content}
@@ -520,9 +536,7 @@ function PreviewView({ content }: { content: string }) {
   return (
     <div className="flex flex-col h-full p-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-white">
-          Prévisualisation
-        </h2>
+        <h2 className="text-lg font-semibold text-white">Prévisualisation</h2>
         <span className="text-sm text-gray-400">Rendu en temps réel</span>
       </div>
       <div className="flex-1 border border-gray-700 rounded-lg overflow-hidden bg-gray-900">
@@ -562,18 +576,45 @@ function MarkdownPreview({ content }: { content: string }) {
   // Sanitiser le HTML avec DOMPurify
   const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
     ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'blockquote',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li',
-      'table', 'thead', 'tbody', 'tr', 'th', 'td',
-      'a', 'img',
-      'div', 'span'
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "code",
+      "pre",
+      "blockquote",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "ul",
+      "ol",
+      "li",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "a",
+      "img",
+      "div",
+      "span",
     ],
     ALLOWED_ATTR: [
-      'href', 'title', 'alt', 'src', 'width', 'height',
-      'class', 'id'
+      "href",
+      "title",
+      "alt",
+      "src",
+      "width",
+      "height",
+      "class",
+      "id",
     ],
-    ALLOWED_URI_REGEXP: /^(?:(?:https?|ftp):)?\/\/[^\s/$.?#].[^\s]*$/i
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|ftp):)?\/\/[^\s/$.?#].[^\s]*$/i,
   });
 
   return (
