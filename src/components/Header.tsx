@@ -31,11 +31,6 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Link to="/tasks" className="hover:underline">
-              Tâches
-            </Link>
-          </li>
-          <li>
             <Link to="/projects" className="hover:underline">
               Projets
             </Link>

@@ -429,8 +429,14 @@ export default function TodoCalendar({ tasks, onEditTask, projects }: TodoCalend
 
       {/* Modal pour les détails du jour */}
       {selectedDay && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={closeDayModal}
+        >
+          <div 
+            className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header de la modal */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <div className="flex items-center space-x-3">
