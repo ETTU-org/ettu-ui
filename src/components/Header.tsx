@@ -26,6 +26,11 @@ export default function Header() {
             </Link>
           </li>
           <li>
+            <Link to="/todos" className="hover:underline">
+              To Do
+            </Link>
+          </li>
+          <li>
             <Link to="/tasks" className="hover:underline">
               Tâches
             </Link>
@@ -35,7 +40,7 @@ export default function Header() {
               Projets
             </Link>
           </li>
-          
+
           {/* Liens de développement - uniquement sur port 5199 */}
           <DevNavLink to="/admin" className="text-yellow-400 hover:underline">
             🛠️ Admin
@@ -92,7 +97,7 @@ export default function Header() {
             <li>
               <Link to="/projects">Projets</Link>
             </li>
-            
+
             {/* Liens de développement - uniquement sur port 5199 */}
             <DevNavLink to="/admin" className="text-yellow-400">
               🛠️ Panel Admin

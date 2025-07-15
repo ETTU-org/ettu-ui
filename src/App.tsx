@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import NotesPage from "./pages/NotesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SnippetsPage from "./pages/SnippetsPage";
+import TodosPage from "./pages/TodosPage";
 import CGUPage from "./pages/CGUPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import LegalNoticePage from "./pages/LegalNoticePage";
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/notes" element={<NotesPage />} />
             <Route path="/snippets" element={<SnippetsPage />} />
+            <Route path="/todos" element={<TodosPage />} />
             <Route path="/legal" element={<LegalPage />} />
             <Route path="/cgu" element={<CGUPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
