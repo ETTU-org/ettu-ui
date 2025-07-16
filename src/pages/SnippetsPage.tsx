@@ -233,19 +233,21 @@ export default function SnippetsPage() {
             {/* Formulaire de création */}
             {isCreating && (
               <div className="mb-4 p-4 border border-green-200 rounded-lg bg-green-50">
-                <h3 className="font-medium mb-2">Créer un nouveau snippet</h3>
+                <h3 className="font-medium mb-2 text-black">
+                  Créer un nouveau snippet
+                </h3>
                 <div className="space-y-2">
                   <input
                     type="text"
                     placeholder="Titre du snippet"
                     value={newSnippetTitle}
                     onChange={(e) => setNewSnippetTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
                   <select
                     value={newSnippetLanguage}
                     onChange={(e) => setNewSnippetLanguage(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   >
                     <option value="javascript">JavaScript</option>
                     <option value="typescript">TypeScript</option>
@@ -261,14 +263,14 @@ export default function SnippetsPage() {
                     value={newSnippetDescription}
                     onChange={(e) => setNewSnippetDescription(e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
                   <textarea
                     placeholder="Code du snippet"
                     value={newSnippetCode}
                     onChange={(e) => setNewSnippetCode(e.target.value)}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
+                    className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
                   />
                   <div className="flex gap-2">
                     <button
