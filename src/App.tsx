@@ -4,6 +4,7 @@ import DevRouteGuard from "./components/DevRouteGuard";
 import DevOnlyRoute from "./components/DevOnlyRoute";
 import DevLoginRoute from "./components/DevLoginRoute";
 import CookieBanner from "./components/CookieBanner";
+import DataCleanupNotification from "./components/DataCleanupNotification";
 import HomePage from "./pages/HomePage";
 import NotesPage from "./pages/NotesPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -80,6 +81,7 @@ export default function App() {
           </Routes>
         </DevRouteGuard>
         <CookieBanner />
+        <DataCleanupNotification />
       </Router>
     </DevAuthProvider>
   );

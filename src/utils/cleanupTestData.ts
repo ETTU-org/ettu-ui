@@ -79,7 +79,7 @@ export const showDataSummary = () => {
     console.log(`   - Snippets: ${snippets.length}`);
     
     if (projects.length > 0) {
-      console.log('   - Projets existants:', projects.map((p: any) => p.name).join(', '));
+      console.log('   - Projets existants:', projects.map((p: { name: string }) => p.name).join(', '));
     }
   } catch (error) {
     console.error('Erreur lors de l\'affichage du résumé:', error);

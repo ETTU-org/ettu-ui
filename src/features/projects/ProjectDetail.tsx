@@ -257,7 +257,7 @@ export default function ProjectDetail({
     { id: "snippets", label: `Snippets (${realSnippetsCount})`, icon: Code },
     {
       id: "tasks",
-      label: `Tâches (${project.stats.totalTasks})`,
+      label: `Tâches (${projectTasks.length})`,
       icon: CheckSquare,
     },
   ];
@@ -327,7 +327,7 @@ export default function ProjectDetail({
         <div className="bg-gray-800 rounded-lg p-4 text-center">
           <CheckSquare className="w-8 h-8 text-purple-400 mx-auto mb-2" />
           <div className="text-2xl font-bold text-white">
-            {project.stats.totalTasks}
+            {projectTasks.length}
           </div>
           <div className="text-sm text-gray-400">Tâches</div>
         </div>
