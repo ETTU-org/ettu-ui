@@ -50,8 +50,8 @@ export default function HomePage() {
             link: "/search",
           },
           {
-            title: "100% local & open source",
-            desc: "Pas d’inscription, pas de cloud, juste votre environnement.",
+            title: "100% sécurisé & open source",
+            desc: "Inscription sécurisée, un environnement de travail privé ou communautaire.",
             link: "/about",
           },
         ].map(({ title, desc, link }) => (

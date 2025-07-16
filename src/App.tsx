@@ -4,7 +4,6 @@ import DevRouteGuard from "./components/DevRouteGuard";
 import DevOnlyRoute from "./components/DevOnlyRoute";
 import DevLoginRoute from "./components/DevLoginRoute";
 import CookieBanner from "./components/CookieBanner";
-import DataCleanupNotification from "./components/DataCleanupNotification";
 import HomePage from "./pages/HomePage";
 import NotesPage from "./pages/NotesPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -19,6 +18,7 @@ import AdminStoragePage from "./pages/AdminStoragePage";
 import TestPage from "./pages/TestPage";
 import AdminPanelPage from "./pages/AdminPanelPage";
 import DevLoginPage from "./pages/DevLoginPage";
+import AboutPage from "./pages/AboutPage";
 import "./App.css";
 
 export default function App() {
@@ -36,7 +36,7 @@ export default function App() {
             <Route path="/cgu" element={<CGUPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/legal-notice" element={<LegalNoticePage />} />
-
+            <Route path="/about" element={<AboutPage />} />
             {/* Route de login dev - uniquement sur port 5199 */}
             <Route
               path="/dev/login"
@@ -81,7 +81,6 @@ export default function App() {
           </Routes>
         </DevRouteGuard>
         <CookieBanner />
-        <DataCleanupNotification />
       </Router>
     </DevAuthProvider>
   );
