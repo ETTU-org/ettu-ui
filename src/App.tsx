@@ -3,6 +3,7 @@ import { DevAuthProvider } from "./contexts/DevAuthContext.tsx";
 import DevRouteGuard from "./components/DevRouteGuard";
 import DevOnlyRoute from "./components/DevOnlyRoute";
 import DevLoginRoute from "./components/DevLoginRoute";
+import CookieBanner from "./components/CookieBanner";
 import HomePage from "./pages/HomePage";
 import NotesPage from "./pages/NotesPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -78,6 +79,7 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </DevRouteGuard>
+        <CookieBanner />
       </Router>
     </DevAuthProvider>
   );

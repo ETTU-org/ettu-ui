@@ -8,9 +8,23 @@
 
 import secureStorage from './secureStorage';
 
+// Fonction pour vérifier le consentement
+const hasConsent = (): boolean => {
+  try {
+    const consent = localStorage.getItem('ettu-consent');
+    if (consent) {
+      const parsed = JSON.parse(consent);
+      return parsed.status === 'accepted';
+    }
+    return false;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Wrapper qui remplace l'API localStorage standard par secureStorage
- * avec migration automatique des données existantes
+ * avec migration automatique des données existantes et respect du consentement
  */
 export class SecureLocalStorage {
   /**
@@ -21,6 +35,12 @@ export class SecureLocalStorage {
    * @returns true si le stockage a réussi, false sinon
    */
   static setItem(key: string, value: string): boolean {
+    // Vérifier le consentement (sauf pour la clé de consentement elle-même)
+    if (key !== 'ettu-consent' && !hasConsent()) {
+      console.warn('Stockage bloqué - Consentement requis');
+      return false;
+    }
+
     try {
       return secureStorage.setItem(key, value);
     } catch (error) {
@@ -37,6 +57,12 @@ export class SecureLocalStorage {
    * @returns Valeur stockée ou null si non trouvée
    */
   static getItem(key: string): string | null {
+    // Vérifier le consentement (sauf pour la clé de consentement elle-même)
+    if (key !== 'ettu-consent' && !hasConsent()) {
+      console.warn('Lecture bloquée - Consentement requis');
+      return null;
+    }
+
     try {
       // Vérifier d'abord dans le stockage sécurisé
       const secureValue = secureStorage.getItem(key);
@@ -72,6 +98,12 @@ export class SecureLocalStorage {
    * @returns true si la suppression a réussi, false sinon
    */
   static removeItem(key: string): boolean {
+    // Vérifier le consentement (sauf pour la clé de consentement elle-même)
+    if (key !== 'ettu-consent' && !hasConsent()) {
+      console.warn('Suppression bloquée - Consentement requis');
+      return false;
+    }
+
     try {
       // Supprimer des deux emplacements pour être sûr
       const secureSuccess = secureStorage.removeItem(key);
@@ -90,6 +122,11 @@ export class SecureLocalStorage {
    * @returns true si l'élément existe, false sinon
    */
   static hasItem(key: string): boolean {
+    // Vérifier le consentement (sauf pour la clé de consentement elle-même)
+    if (key !== 'ettu-consent' && !hasConsent()) {
+      return false;
+    }
+
     try {
       return secureStorage.hasItem(key) || localStorage.getItem(key) !== null;
     } catch (error) {
