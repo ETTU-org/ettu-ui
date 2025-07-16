@@ -17,6 +17,8 @@ import {
   MoreVertical,
   Clock,
   AlertCircle,
+  Eye,
+  X,
 } from "lucide-react";
 import type { ProjectStructure, ProjectContentView } from "../../types/project";
 import { PROJECT_STATUSES } from "../../types/project";
@@ -24,8 +26,9 @@ import { ProjectNoteEditor } from "./ProjectNoteEditor";
 import { ProjectSnippetEditor } from "./ProjectSnippetEditor";
 import { secureLocalStorage } from "../../utils/secureLocalStorage";
 import { useTodos } from "../../hooks/useTodos";
-import type { TodoTask } from "../../types/todo";
+import type { TodoTask, TodoFormData } from "../../types/todo";
 import { TODO_PRIORITIES, TODO_STATUSES } from "../../types/todo";
+import TodoTaskForm from "../todos/TodoTaskForm";
 
 interface ProjectDetailProps {
   project: ProjectStructure;
@@ -45,6 +48,9 @@ export default function ProjectDetail({
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [realNotesCount, setRealNotesCount] = useState(0);
   const [realSnippetsCount, setRealSnippetsCount] = useState(0);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<TodoTask | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TodoTask | null>(null);
   
   // Utiliser le hook useTodos pour gérer les tâches
   const { tasks, createTask, updateTask, deleteTask, setFilter } = useTodos();
@@ -53,6 +59,152 @@ export default function ProjectDetail({
 
   // Filtrer les tâches pour ce projet
   const projectTasks = tasks.filter(task => task.project === project.id);
+
+  // Fonctions pour gérer les tâches
+  const handleCreateTask = (taskData: TodoFormData) => {
+    createTask(taskData);
+    setShowTaskForm(false);
+    setEditingTask(null);
+  };
+
+  const handleEditTask = (task: TodoTask) => {
+    setEditingTask(task);
+    setShowTaskForm(true);
+    setSelectedTask(null);
+  };
+
+  const handleUpdateTask = (taskData: TodoFormData) => {
+    if (editingTask) {
+      updateTask(editingTask.id, taskData);
+      setShowTaskForm(false);
+      setEditingTask(null);
+      setSelectedTask(null);
+    }
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    deleteTask(taskId);
+    setSelectedTask(null);
+  };
+
+  const handleViewTask = (task: TodoTask) => {
+    setSelectedTask(task);
+    setShowTaskForm(false);
+  };
+
+  const handleCloseTaskView = () => {
+    setSelectedTask(null);
+    setEditingTask(null);
+    setShowTaskForm(false);
+  };
+
+  // Composant pour afficher une tâche en détail
+  const TaskDetailView = ({ task }: { task: TodoTask }) => {
+    const statusConfig = TODO_STATUSES.find(s => s.value === task.status);
+    const priorityConfig = TODO_PRIORITIES.find(p => p.value === task.priority);
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Détail de la tâche</h2>
+              <button
+                onClick={handleCloseTaskView}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-white mb-2">{task.title}</h3>
+                <div className="flex items-center space-x-2 mb-3">
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusConfig?.color || 'bg-gray-500'}`}>
+                    {statusConfig?.label || task.status}
+                  </span>
+                  <span className={`text-xs font-medium ${priorityConfig?.color || 'text-gray-500'}`}>
+                    {priorityConfig?.label || task.priority}
+                  </span>
+                </div>
+              </div>
+
+              {task.description && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-300 mb-2">Description</h4>
+                  <p className="text-sm text-gray-400">{task.description}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                {task.estimatedTime && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300 mb-1">Temps estimé</h4>
+                    <div className="flex items-center space-x-1 text-sm text-gray-400">
+                      <Clock className="w-4 h-4" />
+                      <span>{task.estimatedTime}h</span>
+                    </div>
+                  </div>
+                )}
+
+                {task.dueDate && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300 mb-1">Date limite</h4>
+                    <div className="flex items-center space-x-1 text-sm text-gray-400">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>{new Date(task.dueDate).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {task.tags && task.tags.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-300 mb-2">Tags</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {task.tags.map((tag, index) => (
+                      <span key={index} className="inline-flex px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2 pt-4 border-t border-gray-700">
+                <button
+                  onClick={() => handleEditTask(task)}
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  <span>Modifier</span>
+                </button>
+                <button
+                  onClick={() => updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' })}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
+                    task.status === 'done' 
+                      ? 'bg-gray-600 text-white hover:bg-gray-700' 
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                >
+                  <CheckSquare className="w-4 h-4" />
+                  <span>{task.status === 'done' ? 'Rouvrir' : 'Marquer terminé'}</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Supprimer</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Fonction pour charger les compteurs depuis le localStorage
   const loadCounters = useCallback(() => {
@@ -274,19 +426,10 @@ export default function ProjectDetail({
   );
 
   const renderTasks = () => {
-    const handleCreateTask = () => {
-      // Créer une tâche simple avec ce projet
-      const newTask = createTask({
-        title: "Nouvelle tâche",
-        description: "",
-        type: "feature",
-        status: "backlog",
-        priority: "medium",
-        project: project.id,
-        estimatedTime: 1,
-        tags: []
-      });
-      console.log("Tâche créée:", newTask);
+    const handleCreateNewTask = () => {
+      setEditingTask(null);
+      setShowTaskForm(true);
+      setSelectedTask(null);
     };
 
     const handleViewAllTasks = () => {
@@ -320,7 +463,7 @@ export default function ProjectDetail({
               <span>Voir toutes</span>
             </button>
             <button 
-              onClick={handleCreateTask}
+              onClick={handleCreateNewTask}
               className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
             >
               <Plus className="w-4 h-4" />
@@ -337,6 +480,12 @@ export default function ProjectDetail({
               Créez une nouvelle tâche ou assignez des tâches existantes à ce projet
             </p>
             <button 
+              onClick={handleCreateNewTask}
+              className="text-purple-400 hover:text-purple-300 text-sm underline mb-2 mr-4"
+            >
+              Créer une tâche
+            </button>
+            <button 
               onClick={handleViewAllTasks}
               className="text-blue-400 hover:text-blue-300 text-sm underline"
             >
@@ -346,11 +495,14 @@ export default function ProjectDetail({
         ) : (
           <div className="space-y-3">
             {projectTasks.map(task => (
-              <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+              <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                  <div 
+                    className="flex-1 cursor-pointer"
+                    onClick={() => handleViewTask(task)}
+                  >
                     <div className="flex items-center space-x-2 mb-2">
-                      <h4 className="font-medium text-white">{task.title}</h4>
+                      <h4 className="font-medium text-white hover:text-blue-300 transition-colors">{task.title}</h4>
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(task.status)}`}>
                         {TODO_STATUSES.find(s => s.value === task.status)?.label}
                       </span>
@@ -359,7 +511,7 @@ export default function ProjectDetail({
                       </span>
                     </div>
                     {task.description && (
-                      <p className="text-sm text-gray-400 mb-2">{task.description}</p>
+                      <p className="text-sm text-gray-400 mb-2 truncate">{task.description}</p>
                     )}
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
                       {task.estimatedTime && (
@@ -374,18 +526,51 @@ export default function ProjectDetail({
                           <span>{new Date(task.dueDate).toLocaleDateString()}</span>
                         </div>
                       )}
+                      {task.tags && task.tags.length > 0 && (
+                        <div className="flex items-center space-x-1">
+                          <span>{task.tags.length} tag{task.tags.length > 1 ? 's' : ''}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 ml-4">
                     <button 
-                      onClick={() => updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' })}
-                      className="text-green-400 hover:text-green-300"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewTask(task);
+                      }}
+                      className="text-blue-400 hover:text-blue-300 p-1"
+                      title="Voir les détails"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditTask(task);
+                      }}
+                      className="text-yellow-400 hover:text-yellow-300 p-1"
+                      title="Modifier"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' });
+                      }}
+                      className="text-green-400 hover:text-green-300 p-1"
+                      title={task.status === 'done' ? 'Rouvrir' : 'Marquer terminé'}
                     >
                       <CheckSquare className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => deleteTask(task.id)}
-                      className="text-red-400 hover:text-red-300"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(task.id);
+                      }}
+                      className="text-red-400 hover:text-red-300 p-1"
+                      title="Supprimer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -395,6 +580,25 @@ export default function ProjectDetail({
             ))}
           </div>
         )}
+
+        {/* Formulaire de création/modification de tâche */}
+        {showTaskForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <TodoTaskForm
+                task={editingTask}
+                projects={[{ id: project.id, name: project.name, color: project.color, createdAt: project.createdAt, updatedAt: project.updatedAt }]}
+                defaultProject={project.id}
+                onSave={editingTask ? handleUpdateTask : handleCreateTask}
+                onCancel={handleCloseTaskView}
+                onDelete={editingTask ? () => handleDeleteTask(editingTask.id) : undefined}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Vue détaillée de la tâche */}
+        {selectedTask && <TaskDetailView task={selectedTask} />}
       </div>
     );
   };
