@@ -228,7 +228,7 @@ L'application est prête pour être hébergée sur :
 
 ### Contact
 
-- **Email** : julesbossis@gmail.com
+- **Email** : contact.ettu@gmail.com
 - **GitHub** : [julesbossis/ettu-ui](https://github.com/julesbossis/ettu-ui)
 
 ### Documentation

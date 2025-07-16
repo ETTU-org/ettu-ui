@@ -253,7 +253,7 @@ npm run lint
 
 ## 📞 Support
 
-**Contact :** julesbossis@gmail.com  
+**Contact :** contact.ettu@gmail.com  
 **Urgence :** Critique < 24h
 
 ---

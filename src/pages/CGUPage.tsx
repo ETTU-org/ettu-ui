@@ -3,7 +3,7 @@
  * Application ETTU - Outil de gestion de notes et snippets
  *
  * @author BOSSIS--GUYON Jules
- * @contact julesbossis@gmail.com
+ * @contact contact.ettu@gmail.com
  * @date 14 juillet 2025
  */
 
@@ -194,10 +194,10 @@ export default function CGUPage() {
                   <br />
                   Email :{" "}
                   <a
-                    href="mailto:julesbossis@gmail.com"
+                    href="mailto:contact.ettu@gmail.com"
                     className="text-blue-400 hover:text-blue-300"
                   >
-                    julesbossis@gmail.com
+                    contact.ettu@gmail.com
                   </a>
                 </p>
               </div>

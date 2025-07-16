@@ -32,7 +32,7 @@ const PrivacyPolicyPage: React.FC = () => {
                   <strong>Nom :</strong> BOSSIS--GUYON Jules
                 </p>
                 <p className="text-gray-300">
-                  <strong>Email :</strong> julesbossis@gmail.com
+                  <strong>Email :</strong> contact.ettu@gmail.com
                 </p>
                 <p className="text-gray-300">
                   <strong>Qualité :</strong> Développeur et responsable de
@@ -169,7 +169,9 @@ const PrivacyPolicyPage: React.FC = () => {
               </ul>
               <p className="mt-4 text-gray-300">
                 Pour exercer vos droits, contactez-nous à :{" "}
-                <strong className="text-blue-400">julesbossis@gmail.com</strong>
+                <strong className="text-blue-400">
+                  contact.ettu@gmail.com
+                </strong>
               </p>
             </section>
 
@@ -208,7 +210,7 @@ const PrivacyPolicyPage: React.FC = () => {
                   confidentialité ou l'exercice de vos droits :
                 </p>
                 <p className="text-gray-300">
-                  <strong>Email :</strong> julesbossis@gmail.com
+                  <strong>Email :</strong> contact.ettu@gmail.com
                 </p>
                 <p className="text-gray-300">
                   <strong>Délai de réponse :</strong> Sous 30 jours maximum

@@ -11,7 +11,7 @@ export const LEGAL_CONFIG = {
   // Informations sur le responsable/éditeur
   editor: {
     name: "BOSSIS--GUYON Jules",
-    email: "julesbossis@gmail.com",
+    email: "contact.ettu@gmail.com",
     status: "Développeur indépendant",
     quality: "Développeur et responsable de l'application ETTU"
   },
@@ -49,7 +49,7 @@ export const LEGAL_CONFIG = {
 
   // Informations de contact
   contact: {
-    email: "julesbossis@gmail.com",
+    email: "contact.ettu@gmail.com",
     subject: "[ETTU] Contact légal",
     responseTime: "Sous 72 heures",
     legalSubject: "[ETTU] Mentions légales",

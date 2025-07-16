@@ -564,7 +564,7 @@ const applyPlugins = (action: string, snippet: Snippet) => {
 **Documentation :** `/docs/SNIPPETS_SYSTEM.md`  
 **Tests :** `npm run test:snippets`  
 **Issues :** GitHub Issues  
-**Support :** julesbossis@gmail.com
+**Support :** contact.ettu@gmail.com
 
 ---
 

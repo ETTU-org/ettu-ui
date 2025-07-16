@@ -79,7 +79,7 @@ npm install lucide-react  # Pour les icônes
 export const legalConfig = {
   editor: {
     name: "Jules BOSSIS--GUYON",
-    email: "julesbossis@gmail.com",
+    email: "contact.ettu@gmail.com",
     address: "France",
   },
   hosting: {
@@ -180,7 +180,7 @@ L'application ETTU respecte les droits et la vie privée des utilisateurs. Ces d
 1. **Accès direct** : Gérez vos données dans l'application
 2. **Suppression** : Effacez vos données localement
 3. **Export** : Utilisez les fonctions d'exportation
-4. **Contact** : julesbossis@gmail.com pour toute question
+4. **Contact** : contact.ettu@gmail.com pour toute question
 
 ## 🧪 Tests et Validation
 
@@ -242,7 +242,7 @@ L'application ETTU respecte les droits et la vie privée des utilisateurs. Ces d
 
 ## 📞 Support
 
-**Contact :** julesbossis@gmail.com  
+**Contact :** contact.ettu@gmail.com  
 **Sujet :** Questions légales ETTU  
 **Délai de réponse :** 72h maximum
 

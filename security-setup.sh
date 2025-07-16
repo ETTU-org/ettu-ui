@@ -225,6 +225,6 @@ echo "5. Exécuter: npm run build (test de production)"
 echo "\n⚠️  IMPORTANT: Modification manuelle requise pour NoteEditor.tsx"
 echo "Voir: src/docs/SECURITY_IMPLEMENTATION.md section 1"
 
-echo "\n📞 Support: julesbossis@gmail.com"
+echo "\n📞 Support: contact.ettu@gmail.com"
 echo "🔗 Documentation: src/docs/SECURITY_ASSESSMENT.md"
 EOF

@@ -431,7 +431,7 @@ const trackMobileInteraction = (action: string) => {
 
 **Documentation :** `/docs/RESPONSIVE_SYSTEM.md`  
 **Tests :** `npm run test:responsive`  
-**Support :** julesbossis@gmail.com
+**Support :** contact.ettu@gmail.com
 
 ---
 

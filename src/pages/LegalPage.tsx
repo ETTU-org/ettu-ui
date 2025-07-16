@@ -120,7 +120,7 @@ const LegalPage: React.FC = () => {
             Une question sur nos documents légaux ?
           </p>
           <a
-            href="mailto:julesbossis@gmail.com"
+            href="mailto:contact.ettu@gmail.com"
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
           >
             <span>Nous contacter</span>

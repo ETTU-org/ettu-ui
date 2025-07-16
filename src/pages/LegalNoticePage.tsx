@@ -23,7 +23,7 @@ const LegalNoticePage: React.FC = () => {
                   <strong>Qualité :</strong> Développeur indépendant
                 </p>
                 <p className="text-gray-300">
-                  <strong>Email :</strong> julesbossis@gmail.com
+                  <strong>Email :</strong> contact.ettu@gmail.com
                 </p>
                 <p className="text-gray-300">
                   <strong>Statut :</strong> Personne physique
@@ -254,7 +254,7 @@ const LegalNoticePage: React.FC = () => {
               </p>
               <div className="bg-blue-900 p-4 rounded-lg">
                 <p className="text-gray-300">
-                  <strong>Email :</strong> julesbossis@gmail.com
+                  <strong>Email :</strong> contact.ettu@gmail.com
                 </p>
                 <p className="text-gray-300">
                   <strong>Objet :</strong> [ETTU] Mentions légales

@@ -400,7 +400,7 @@ export function diagnoseStorage() {
 
 ### Contact
 
-**Support technique :** julesbossis@gmail.com  
+**Support technique :** contact.ettu@gmail.com  
 **Documentation :** `/docs/STORAGE_SYSTEM.md`  
 **Tests :** `npm run test:security`
 
