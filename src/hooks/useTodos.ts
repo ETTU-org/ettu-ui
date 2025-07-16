@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import secureStorage from '../utils/secureStorage';
-import { sampleTasks, sampleProjects } from '../data/sampleData';
+import { sampleTasks } from '../data/sampleData';
 import type { 
   TodoTask, 
   TodoProject, 
@@ -16,15 +16,45 @@ import type {
   TodoType,
   TodoPriority
 } from '../types/todo';
+import type { ProjectStructure } from '../types/project';
 
 const TODO_STORAGE_KEY = 'ettu-todos';
-const TODO_PROJECTS_KEY = 'ettu-todo-projects';
+const PROJECTS_STORAGE_KEY = 'ettu-projects'; // Utiliser la même clé que useProjects
 
 export function useTodos() {
   const [tasks, setTasks] = useState<TodoTask[]>([]);
   const [projects, setProjects] = useState<TodoProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TodoFilter>({});
+
+  // Fonction pour convertir les projets ETTU en projets TODO
+  const convertProjectsToTodoProjects = useCallback((ettuProjects: ProjectStructure[]): TodoProject[] => {
+    return ettuProjects.map(project => ({
+      id: project.id,
+      name: project.name,
+      color: project.color,
+      description: project.description || '',
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+      isActive: project.status === 'active'
+    }));
+  }, []);
+
+  // Fonction pour charger les projets depuis le localStorage des projets ETTU
+  const loadProjectsFromETTU = useCallback(() => {
+    try {
+      const projectsData = localStorage.getItem(PROJECTS_STORAGE_KEY);
+      if (projectsData) {
+        const ettuProjects: ProjectStructure[] = JSON.parse(projectsData);
+        const todoProjects = convertProjectsToTodoProjects(ettuProjects);
+        setProjects(todoProjects);
+        return todoProjects;
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des projets ETTU:', error);
+    }
+    return [];
+  }, [convertProjectsToTodoProjects]);
 
   // Initialisation des données au montage du composant
   useEffect(() => {
@@ -46,21 +76,8 @@ export function useTodos() {
           secureStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(sampleTasks));
         }
 
-        // Charger les projets
-        const projectsData = secureStorage.getItem(TODO_PROJECTS_KEY);
-        if (projectsData) {
-          try {
-            const parsedProjects = JSON.parse(projectsData);
-            setProjects(Array.isArray(parsedProjects) ? parsedProjects : []);
-          } catch (error) {
-            console.error('Erreur parsing projects:', error);
-            setProjects([]);
-          }
-        } else {
-          // Charger les projets de test si aucune donnée n'existe
-          setProjects(sampleProjects);
-          secureStorage.setItem(TODO_PROJECTS_KEY, JSON.stringify(sampleProjects));
-        }
+        // Charger les projets depuis les projets ETTU
+        loadProjectsFromETTU();
       } catch (error) {
         console.error('Erreur lors du chargement des données TODO:', error);
         setTasks([]);
@@ -71,7 +88,19 @@ export function useTodos() {
     };
 
     initializeData();
-  }, []); // Pas de dépendances pour éviter les boucles infinies
+  }, [loadProjectsFromETTU]); // Dépendance mise à jour
+
+  // Surveiller les changements dans les projets ETTU
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === PROJECTS_STORAGE_KEY) {
+        loadProjectsFromETTU();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [loadProjectsFromETTU]);
 
   // Sauvegarder les tâches
   const saveTasks = useCallback((newTasks: TodoTask[]) => {
@@ -80,16 +109,6 @@ export function useTodos() {
       secureStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(newTasks));
     } catch (error) {
       console.error('Erreur lors de la sauvegarde des tâches:', error);
-    }
-  }, []);
-
-  // Sauvegarder les projets
-  const saveProjects = useCallback((newProjects: TodoProject[]) => {
-    try {
-      setProjects(newProjects);
-      secureStorage.setItem(TODO_PROJECTS_KEY, JSON.stringify(newProjects));
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des projets:', error);
     }
   }, []);
 
@@ -160,23 +179,75 @@ export function useTodos() {
       updatedAt: new Date()
     };
 
-    const updatedProjects = [...projects, newProject];
-    saveProjects(updatedProjects);
+    // Convertir le projet TODO en projet ETTU
+    const ettuProject: ProjectStructure = {
+      id: newProject.id,
+      name: newProject.name,
+      color: newProject.color,
+      description: newProject.description || '',
+      status: 'active',
+      createdAt: newProject.createdAt,
+      updatedAt: newProject.updatedAt,
+      stats: {
+        totalNotes: 0,
+        totalSnippets: 0,
+        totalTasks: 0,
+        completedTasks: 0,
+        lastActivity: new Date()
+      },
+      settings: {
+        allowPublicSharing: false,
+        defaultNoteType: 'documentation',
+        defaultSnippetLanguage: 'javascript'
+      },
+      metadata: {
+        technologies: [],
+        team: [],
+        repository: '',
+        documentation: ''
+      }
+    };
+
+    // Ajouter le projet au localStorage des projets ETTU
+    try {
+      const projectsData = localStorage.getItem(PROJECTS_STORAGE_KEY);
+      const ettuProjects: ProjectStructure[] = projectsData ? JSON.parse(projectsData) : [];
+      ettuProjects.push(ettuProject);
+      localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(ettuProjects));
+      
+      // Mettre à jour l'état local
+      setProjects(prev => [...prev, newProject]);
+    } catch (error) {
+      console.error('Erreur lors de la création du projet:', error);
+    }
+
     return newProject;
   };
 
   // Supprimer un projet
   const deleteProject = (projectId: string) => {
-    const updatedProjects = projects.filter(p => p.id !== projectId);
-    saveProjects(updatedProjects);
-    
-    // Mettre à jour les tâches qui utilisent ce projet
-    const updatedTasks = tasks.map(task => 
-      task.project === projectId 
-        ? { ...task, project: undefined, updatedAt: new Date() }
-        : task
-    );
-    saveTasks(updatedTasks);
+    try {
+      // Supprimer le projet du localStorage des projets ETTU
+      const projectsData = localStorage.getItem(PROJECTS_STORAGE_KEY);
+      if (projectsData) {
+        const ettuProjects: ProjectStructure[] = JSON.parse(projectsData);
+        const updatedEttuProjects = ettuProjects.filter(p => p.id !== projectId);
+        localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updatedEttuProjects));
+      }
+
+      // Mettre à jour l'état local
+      setProjects(prev => prev.filter(p => p.id !== projectId));
+      
+      // Mettre à jour les tâches qui utilisent ce projet
+      const updatedTasks = tasks.map(task => 
+        task.project === projectId 
+          ? { ...task, project: undefined, updatedAt: new Date() }
+          : task
+      );
+      saveTasks(updatedTasks);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du projet:', error);
+    }
   };
 
   // Filtrer les tâches
@@ -329,7 +400,6 @@ export function useTodos() {
   const cleanup = useCallback(() => {
     try {
       secureStorage.removeItem(TODO_STORAGE_KEY);
-      secureStorage.removeItem(TODO_PROJECTS_KEY);
       setTasks([]);
       setProjects([]);
     } catch (error) {
@@ -340,17 +410,17 @@ export function useTodos() {
   // Fonction pour réinitialiser les données avec les données de test
   const loadSampleData = useCallback(() => {
     setTasks(sampleTasks);
-    setProjects(sampleProjects);
     secureStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(sampleTasks));
-    secureStorage.setItem(TODO_PROJECTS_KEY, JSON.stringify(sampleProjects));
-  }, []);
+    // Recharger les projets depuis le système ETTU
+    loadProjectsFromETTU();
+  }, [loadProjectsFromETTU]);
 
   // Fonction pour vider toutes les données
   const clearAllData = useCallback(() => {
     setTasks([]);
     setProjects([]);
     secureStorage.removeItem(TODO_STORAGE_KEY);
-    secureStorage.removeItem(TODO_PROJECTS_KEY);
+    // Note: Les projets sont gérés par le système ETTU
   }, []);
 
   return {

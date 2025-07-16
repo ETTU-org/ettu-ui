@@ -20,6 +20,7 @@ import type { TodoTask, TodoProject, TodoFormData } from "../../types/todo";
 interface TodoTaskFormProps {
   task?: TodoTask | null;
   projects: TodoProject[];
+  defaultProject?: string;
   onSave: (taskData: TodoFormData) => void;
   onCancel: () => void;
   onDelete?: (taskId: string) => void;
@@ -28,6 +29,7 @@ interface TodoTaskFormProps {
 export default function TodoTaskForm({
   task,
   projects,
+  defaultProject,
   onSave,
   onCancel,
   onDelete,
@@ -39,7 +41,7 @@ export default function TodoTaskForm({
     priority: "medium",
     status: "backlog",
     tags: [],
-    project: "",
+    project: defaultProject || "",
     assignee: "",
     estimatedTime: undefined,
     dueDate: undefined,
@@ -66,8 +68,14 @@ export default function TodoTaskForm({
         relatedNotes: task.relatedNotes || [],
         relatedSnippets: task.relatedSnippets || [],
       });
+    } else if (defaultProject) {
+      // Si pas de tâche mais un projet par défaut, l'appliquer
+      setFormData(prev => ({
+        ...prev,
+        project: defaultProject
+      }));
     }
-  }, [task]);
+  }, [task, defaultProject]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

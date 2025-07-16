@@ -24,6 +24,7 @@ import TodoTaskForm from "./TodoTaskForm";
 import TodoFilters from "./TodoFilters";
 import TodoStats from "./TodoStats";
 import TodoProjectManager from "./TodoProjectManager";
+import ProjectTodoIntegration from "../../components/ProjectTodoIntegration";
 import type { TodoTask, TodoViewMode, TodoFormData } from "../../types/todo";
 
 export default function TodoManager() {
@@ -146,6 +147,7 @@ export default function TodoManager() {
         <TodoTaskForm
           task={editingTask}
           projects={projects}
+          defaultProject={filter.project}
           onSave={handleCreateTask}
           onCancel={handleCancelEdit}
           onDelete={deleteTask}
@@ -326,7 +328,15 @@ export default function TodoManager() {
       <div className="flex-1 min-h-0">
         {isMobile ? (
           <ResponsiveLayout
-            mainContent={renderMainContent()}
+            mainContent={
+              <div>
+                <ProjectTodoIntegration
+                  filteredProject={filter.project ? projects.find(p => p.id === filter.project) : undefined}
+                  onClearFilter={clearFilter}
+                />
+                {renderMainContent()}
+              </div>
+            }
             previewContent={renderSidebar()}
             tabs={[
               { id: "main", label: "Tâches", icon: "📋" },
@@ -335,7 +345,14 @@ export default function TodoManager() {
           />
         ) : (
           <div className="flex h-full">
-            <div className="flex-1 p-4 bg-gray-900">{renderMainContent()}</div>
+            <div className="flex-1 p-4 bg-gray-900">
+              {/* Intégration projet-todo */}
+              <ProjectTodoIntegration
+                filteredProject={filter.project ? projects.find(p => p.id === filter.project) : undefined}
+                onClearFilter={clearFilter}
+              />
+              {renderMainContent()}
+            </div>
             <div className="w-80 border-l border-gray-700 bg-gray-800">
               {renderSidebar()}
             </div>

@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Edit2,
@@ -14,12 +15,17 @@ import {
   Users,
   ExternalLink,
   MoreVertical,
+  Clock,
+  AlertCircle,
 } from "lucide-react";
 import type { ProjectStructure, ProjectContentView } from "../../types/project";
 import { PROJECT_STATUSES } from "../../types/project";
 import { ProjectNoteEditor } from "./ProjectNoteEditor";
 import { ProjectSnippetEditor } from "./ProjectSnippetEditor";
 import { secureLocalStorage } from "../../utils/secureLocalStorage";
+import { useTodos } from "../../hooks/useTodos";
+import type { TodoTask } from "../../types/todo";
+import { TODO_PRIORITIES, TODO_STATUSES } from "../../types/todo";
 
 interface ProjectDetailProps {
   project: ProjectStructure;
@@ -34,12 +40,19 @@ export default function ProjectDetail({
   onEdit,
   onDelete,
 }: ProjectDetailProps) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectContentView>("overview");
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [realNotesCount, setRealNotesCount] = useState(0);
   const [realSnippetsCount, setRealSnippetsCount] = useState(0);
+  
+  // Utiliser le hook useTodos pour gérer les tâches
+  const { tasks, createTask, updateTask, deleteTask, setFilter } = useTodos();
 
   const statusConfig = PROJECT_STATUSES.find((s) => s.value === project.status);
+
+  // Filtrer les tâches pour ce projet
+  const projectTasks = tasks.filter(task => task.project === project.id);
 
   // Fonction pour charger les compteurs depuis le localStorage
   const loadCounters = useCallback(() => {
@@ -260,25 +273,131 @@ export default function ProjectDetail({
     </div>
   );
 
-  const renderTasks = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Tâches du projet</h3>
-        <button className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
-          <Plus className="w-4 h-4" />
-          <span>Nouvelle tâche</span>
-        </button>
-      </div>
+  const renderTasks = () => {
+    const handleCreateTask = () => {
+      // Créer une tâche simple avec ce projet
+      const newTask = createTask({
+        title: "Nouvelle tâche",
+        description: "",
+        type: "feature",
+        status: "backlog",
+        priority: "medium",
+        project: project.id,
+        estimatedTime: 1,
+        tags: []
+      });
+      console.log("Tâche créée:", newTask);
+    };
 
-      <div className="text-center py-12 text-gray-500">
-        <CheckSquare className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-        <p>Les tâches sont gérées dans la section TODO</p>
-        <p className="text-sm">
-          Filtrez par projet dans la vue TODO pour voir les tâches
-        </p>
+    const handleViewAllTasks = () => {
+      // Appliquer le filtre de projet et naviguer vers la page des todos
+      setFilter({ project: project.id });
+      navigate('/todos');
+    };
+
+    const getStatusColor = (status: TodoTask['status']) => {
+      const statusConfig = TODO_STATUSES.find(s => s.value === status);
+      return statusConfig?.color || 'bg-gray-500';
+    };
+
+    const getPriorityColor = (priority: TodoTask['priority']) => {
+      const priorityConfig = TODO_PRIORITIES.find(p => p.value === priority);
+      return priorityConfig?.color || 'text-gray-500';
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-white">
+            Tâches du projet ({projectTasks.length})
+          </h3>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleViewAllTasks}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Voir toutes</span>
+            </button>
+            <button 
+              onClick={handleCreateTask}
+              className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nouvelle tâche</span>
+            </button>
+          </div>
+        </div>
+
+        {projectTasks.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <CheckSquare className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+            <p>Aucune tâche dans ce projet</p>
+            <p className="text-sm mb-4">
+              Créez une nouvelle tâche ou assignez des tâches existantes à ce projet
+            </p>
+            <button 
+              onClick={handleViewAllTasks}
+              className="text-blue-400 hover:text-blue-300 text-sm underline"
+            >
+              Gérer les tâches dans la vue TODO
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {projectTasks.map(task => (
+              <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h4 className="font-medium text-white">{task.title}</h4>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(task.status)}`}>
+                        {TODO_STATUSES.find(s => s.value === task.status)?.label}
+                      </span>
+                      <span className={`text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                        {TODO_PRIORITIES.find(p => p.value === task.priority)?.label}
+                      </span>
+                    </div>
+                    {task.description && (
+                      <p className="text-sm text-gray-400 mb-2">{task.description}</p>
+                    )}
+                    <div className="flex items-center space-x-4 text-xs text-gray-500">
+                      {task.estimatedTime && (
+                        <div className="flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{task.estimatedTime}h</span>
+                        </div>
+                      )}
+                      {task.dueDate && (
+                        <div className="flex items-center space-x-1">
+                          <AlertCircle className="w-3 h-3" />
+                          <span>{new Date(task.dueDate).toLocaleDateString()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 ml-4">
+                    <button 
+                      onClick={() => updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' })}
+                      className="text-green-400 hover:text-green-300"
+                    >
+                      <CheckSquare className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => deleteTask(task.id)}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     switch (activeTab) {
