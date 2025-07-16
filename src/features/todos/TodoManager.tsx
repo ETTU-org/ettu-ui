@@ -42,9 +42,7 @@ export default function TodoManager() {
     filter,
     setFilter,
     clearFilter,
-    loadSampleData,
     allAssignees,
-    // clearAllData,
   } = useTodos();
 
   const [viewMode, setViewMode] = useState<TodoViewMode["view"]>("board");
@@ -289,23 +287,6 @@ export default function TodoManager() {
             title="Projets"
           >
             <Settings className="w-4 h-4" />
-          </button>
-
-          {/* Bouton pour charger les données de test */}
-          <button
-            onClick={() => {
-              if (
-                confirm(
-                  "Voulez-vous charger les données de test ? Cela remplacera vos données actuelles."
-                )
-              ) {
-                loadSampleData();
-              }
-            }}
-            className="p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
-            title="Charger les données de test"
-          >
-            <span className="text-sm">🎯</span>
           </button>
 
           <button

@@ -4,7 +4,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import secureStorage from '../utils/secureStorage';
-import { sampleTasks } from '../data/sampleData';
 import type { 
   TodoTask, 
   TodoProject, 
@@ -71,9 +70,8 @@ export function useTodos() {
             setTasks([]);
           }
         } else {
-          // Charger les données de test si aucune donnée n'existe
-          setTasks(sampleTasks);
-          secureStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(sampleTasks));
+          // Initialiser avec un tableau vide si aucune donnée n'existe
+          setTasks([]);
         }
 
         // Charger les projets depuis les projets ETTU
@@ -407,14 +405,6 @@ export function useTodos() {
     }
   }, []);
 
-  // Fonction pour réinitialiser les données avec les données de test
-  const loadSampleData = useCallback(() => {
-    setTasks(sampleTasks);
-    secureStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(sampleTasks));
-    // Recharger les projets depuis le système ETTU
-    loadProjectsFromETTU();
-  }, [loadProjectsFromETTU]);
-
   // Fonction pour vider toutes les données
   const clearAllData = useCallback(() => {
     setTasks([]);
@@ -455,7 +445,6 @@ export function useTodos() {
 
     // Utilitaires
     cleanup,
-    loadSampleData,
     clearAllData,
     
     // Fonctions utilitaires

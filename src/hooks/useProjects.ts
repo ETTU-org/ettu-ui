@@ -14,7 +14,6 @@ import type {
   SnippetFormData,
   ProjectStatus
 } from '../types/project';
-import { MOCK_PROJECTS, MOCK_SNIPPETS } from '../data/mockProjects';
 
 const STORAGE_KEYS = {
   projects: 'ettu-projects',
@@ -63,9 +62,8 @@ export function useProjects() {
           }));
           setProjects(projectsWithDates);
         } else {
-          // Utiliser les données de test si aucune donnée n'est sauvegardée
-          setProjects(MOCK_PROJECTS);
-          saveProjects(MOCK_PROJECTS);
+          // Initialiser avec un tableau vide si aucune donnée n'est sauvegardée
+          setProjects([]);
         }
 
         // Charger les notes - maintenant géré par projet, donc on initialise vide
@@ -82,9 +80,8 @@ export function useProjects() {
           }));
           setSnippets(snippetsWithDates);
         } else {
-          // Utiliser les données de test
-          setSnippets(MOCK_SNIPPETS);
-          saveSnippets(MOCK_SNIPPETS);
+          // Initialiser avec un tableau vide
+          setSnippets([]);
         }
       } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
