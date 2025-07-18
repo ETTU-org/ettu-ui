@@ -51,14 +51,14 @@ export default function ProjectDetail({
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<TodoTask | null>(null);
   const [selectedTask, setSelectedTask] = useState<TodoTask | null>(null);
-  
+
   // Utiliser le hook useTodos pour gérer les tâches
   const { tasks, createTask, updateTask, deleteTask, setFilter } = useTodos();
 
   const statusConfig = PROJECT_STATUSES.find((s) => s.value === project.status);
 
   // Filtrer les tâches pour ce projet
-  const projectTasks = tasks.filter(task => task.project === project.id);
+  const projectTasks = tasks.filter((task) => task.project === project.id);
 
   // Fonctions pour gérer les tâches
   const handleCreateTask = (taskData: TodoFormData) => {
@@ -100,15 +100,19 @@ export default function ProjectDetail({
 
   // Composant pour afficher une tâche en détail
   const TaskDetailView = ({ task }: { task: TodoTask }) => {
-    const statusConfig = TODO_STATUSES.find(s => s.value === task.status);
-    const priorityConfig = TODO_PRIORITIES.find(p => p.value === task.priority);
-    
+    const statusConfig = TODO_STATUSES.find((s) => s.value === task.status);
+    const priorityConfig = TODO_PRIORITIES.find(
+      (p) => p.value === task.priority
+    );
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white">Détail de la tâche</h2>
+              <h2 className="text-xl font-semibold text-white">
+                Détail de la tâche
+              </h2>
               <button
                 onClick={handleCloseTaskView}
                 className="text-gray-400 hover:text-white"
@@ -119,12 +123,22 @@ export default function ProjectDetail({
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium text-white mb-2">{task.title}</h3>
+                <h3 className="text-lg font-medium text-white mb-2">
+                  {task.title}
+                </h3>
                 <div className="flex items-center space-x-2 mb-3">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusConfig?.color || 'bg-gray-500'}`}>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      statusConfig?.color || "bg-gray-500"
+                    }`}
+                  >
                     {statusConfig?.label || task.status}
                   </span>
-                  <span className={`text-xs font-medium ${priorityConfig?.color || 'text-gray-500'}`}>
+                  <span
+                    className={`text-xs font-medium ${
+                      priorityConfig?.color || "text-gray-500"
+                    }`}
+                  >
                     {priorityConfig?.label || task.priority}
                   </span>
                 </div>
@@ -132,7 +146,9 @@ export default function ProjectDetail({
 
               {task.description && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-2">Description</h4>
+                  <h4 className="text-sm font-medium text-gray-300 mb-2">
+                    Description
+                  </h4>
                   <p className="text-sm text-gray-400">{task.description}</p>
                 </div>
               )}
@@ -140,7 +156,9 @@ export default function ProjectDetail({
               <div className="grid grid-cols-2 gap-4">
                 {task.estimatedTime && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-300 mb-1">Temps estimé</h4>
+                    <h4 className="text-sm font-medium text-gray-300 mb-1">
+                      Temps estimé
+                    </h4>
                     <div className="flex items-center space-x-1 text-sm text-gray-400">
                       <Clock className="w-4 h-4" />
                       <span>{task.estimatedTime}h</span>
@@ -150,7 +168,9 @@ export default function ProjectDetail({
 
                 {task.dueDate && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-300 mb-1">Date limite</h4>
+                    <h4 className="text-sm font-medium text-gray-300 mb-1">
+                      Date limite
+                    </h4>
                     <div className="flex items-center space-x-1 text-sm text-gray-400">
                       <AlertCircle className="w-4 h-4" />
                       <span>{new Date(task.dueDate).toLocaleDateString()}</span>
@@ -161,10 +181,15 @@ export default function ProjectDetail({
 
               {task.tags && task.tags.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-300 mb-2">Tags</h4>
+                  <h4 className="text-sm font-medium text-gray-300 mb-2">
+                    Tags
+                  </h4>
                   <div className="flex flex-wrap gap-1">
                     {task.tags.map((tag, index) => (
-                      <span key={index} className="inline-flex px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+                      <span
+                        key={index}
+                        className="inline-flex px-2 py-1 text-xs bg-blue-600 text-white rounded-full"
+                      >
                         {tag}
                       </span>
                     ))}
@@ -181,15 +206,22 @@ export default function ProjectDetail({
                   <span>Modifier</span>
                 </button>
                 <button
-                  onClick={() => updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' })}
+                  onClick={() =>
+                    updateTask(task.id, {
+                      ...task,
+                      status: task.status === "done" ? "backlog" : "done",
+                    })
+                  }
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
-                    task.status === 'done' 
-                      ? 'bg-gray-600 text-white hover:bg-gray-700' 
-                      : 'bg-green-600 text-white hover:bg-green-700'
+                    task.status === "done"
+                      ? "bg-gray-600 text-white hover:bg-gray-700"
+                      : "bg-green-600 text-white hover:bg-green-700"
                   }`}
                 >
                   <CheckSquare className="w-4 h-4" />
-                  <span>{task.status === 'done' ? 'Rouvrir' : 'Marquer terminé'}</span>
+                  <span>
+                    {task.status === "done" ? "Rouvrir" : "Marquer terminé"}
+                  </span>
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id)}
@@ -312,15 +344,13 @@ export default function ProjectDetail({
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-gray-800 rounded-lg p-4 text-center">
           <FileText className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-          <div className="text-2xl font-bold text-white">
-            {project.stats.totalNotes}
-          </div>
+          <div className="text-2xl font-bold text-white">{realNotesCount} </div>
           <div className="text-sm text-gray-400">Notes</div>
         </div>
         <div className="bg-gray-800 rounded-lg p-4 text-center">
           <Code className="w-8 h-8 text-green-400 mx-auto mb-2" />
           <div className="text-2xl font-bold text-white">
-            {project.stats.totalSnippets}
+            {realSnippetsCount}
           </div>
           <div className="text-sm text-gray-400">Snippets</div>
         </div>
@@ -435,17 +465,17 @@ export default function ProjectDetail({
     const handleViewAllTasks = () => {
       // Appliquer le filtre de projet et naviguer vers la page des todos
       setFilter({ project: project.id });
-      navigate('/todos');
+      navigate("/todos");
     };
 
-    const getStatusColor = (status: TodoTask['status']) => {
-      const statusConfig = TODO_STATUSES.find(s => s.value === status);
-      return statusConfig?.color || 'bg-gray-500';
+    const getStatusColor = (status: TodoTask["status"]) => {
+      const statusConfig = TODO_STATUSES.find((s) => s.value === status);
+      return statusConfig?.color || "bg-gray-500";
     };
 
-    const getPriorityColor = (priority: TodoTask['priority']) => {
-      const priorityConfig = TODO_PRIORITIES.find(p => p.value === priority);
-      return priorityConfig?.color || 'text-gray-500';
+    const getPriorityColor = (priority: TodoTask["priority"]) => {
+      const priorityConfig = TODO_PRIORITIES.find((p) => p.value === priority);
+      return priorityConfig?.color || "text-gray-500";
     };
 
     return (
@@ -455,14 +485,14 @@ export default function ProjectDetail({
             Tâches du projet ({projectTasks.length})
           </h3>
           <div className="flex items-center space-x-2">
-            <button 
+            <button
               onClick={handleViewAllTasks}
               className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               <ExternalLink className="w-4 h-4" />
               <span>Voir toutes</span>
             </button>
-            <button 
+            <button
               onClick={handleCreateNewTask}
               className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
             >
@@ -477,15 +507,16 @@ export default function ProjectDetail({
             <CheckSquare className="w-16 h-16 mx-auto mb-4 text-gray-600" />
             <p>Aucune tâche dans ce projet</p>
             <p className="text-sm mb-4">
-              Créez une nouvelle tâche ou assignez des tâches existantes à ce projet
+              Créez une nouvelle tâche ou assignez des tâches existantes à ce
+              projet
             </p>
-            <button 
+            <button
               onClick={handleCreateNewTask}
               className="text-purple-400 hover:text-purple-300 text-sm underline mb-2 mr-4"
             >
               Créer une tâche
             </button>
-            <button 
+            <button
               onClick={handleViewAllTasks}
               className="text-blue-400 hover:text-blue-300 text-sm underline"
             >
@@ -494,24 +525,45 @@ export default function ProjectDetail({
           </div>
         ) : (
           <div className="space-y-3">
-            {projectTasks.map(task => (
-              <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors">
+            {projectTasks.map((task) => (
+              <div
+                key={task.id}
+                className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors"
+              >
                 <div className="flex items-start justify-between">
-                  <div 
+                  <div
                     className="flex-1 cursor-pointer"
                     onClick={() => handleViewTask(task)}
                   >
                     <div className="flex items-center space-x-2 mb-2">
-                      <h4 className="font-medium text-white hover:text-blue-300 transition-colors">{task.title}</h4>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(task.status)}`}>
-                        {TODO_STATUSES.find(s => s.value === task.status)?.label}
+                      <h4 className="font-medium text-white hover:text-blue-300 transition-colors">
+                        {task.title}
+                      </h4>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                          task.status
+                        )}`}
+                      >
+                        {
+                          TODO_STATUSES.find((s) => s.value === task.status)
+                            ?.label
+                        }
                       </span>
-                      <span className={`text-xs font-medium ${getPriorityColor(task.priority)}`}>
-                        {TODO_PRIORITIES.find(p => p.value === task.priority)?.label}
+                      <span
+                        className={`text-xs font-medium ${getPriorityColor(
+                          task.priority
+                        )}`}
+                      >
+                        {
+                          TODO_PRIORITIES.find((p) => p.value === task.priority)
+                            ?.label
+                        }
                       </span>
                     </div>
                     {task.description && (
-                      <p className="text-sm text-gray-400 mb-2 truncate">{task.description}</p>
+                      <p className="text-sm text-gray-400 mb-2 truncate">
+                        {task.description}
+                      </p>
                     )}
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
                       {task.estimatedTime && (
@@ -523,18 +575,23 @@ export default function ProjectDetail({
                       {task.dueDate && (
                         <div className="flex items-center space-x-1">
                           <AlertCircle className="w-3 h-3" />
-                          <span>{new Date(task.dueDate).toLocaleDateString()}</span>
+                          <span>
+                            {new Date(task.dueDate).toLocaleDateString()}
+                          </span>
                         </div>
                       )}
                       {task.tags && task.tags.length > 0 && (
                         <div className="flex items-center space-x-1">
-                          <span>{task.tags.length} tag{task.tags.length > 1 ? 's' : ''}</span>
+                          <span>
+                            {task.tags.length} tag
+                            {task.tags.length > 1 ? "s" : ""}
+                          </span>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 ml-4">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleViewTask(task);
@@ -544,7 +601,7 @@ export default function ProjectDetail({
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditTask(task);
@@ -554,17 +611,22 @@ export default function ProjectDetail({
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        updateTask(task.id, { ...task, status: task.status === 'done' ? 'backlog' : 'done' });
+                        updateTask(task.id, {
+                          ...task,
+                          status: task.status === "done" ? "backlog" : "done",
+                        });
                       }}
                       className="text-green-400 hover:text-green-300 p-1"
-                      title={task.status === 'done' ? 'Rouvrir' : 'Marquer terminé'}
+                      title={
+                        task.status === "done" ? "Rouvrir" : "Marquer terminé"
+                      }
                     >
                       <CheckSquare className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteTask(task.id);
@@ -587,11 +649,23 @@ export default function ProjectDetail({
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               <TodoTaskForm
                 task={editingTask}
-                projects={[{ id: project.id, name: project.name, color: project.color, createdAt: project.createdAt, updatedAt: project.updatedAt }]}
+                projects={[
+                  {
+                    id: project.id,
+                    name: project.name,
+                    color: project.color,
+                    createdAt: project.createdAt,
+                    updatedAt: project.updatedAt,
+                  },
+                ]}
                 defaultProject={project.id}
                 onSave={editingTask ? handleUpdateTask : handleCreateTask}
                 onCancel={handleCloseTaskView}
-                onDelete={editingTask ? () => handleDeleteTask(editingTask.id) : undefined}
+                onDelete={
+                  editingTask
+                    ? () => handleDeleteTask(editingTask.id)
+                    : undefined
+                }
               />
             </div>
           </div>
